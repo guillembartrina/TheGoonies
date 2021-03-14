@@ -1,0 +1,31 @@
+- Nom nivell
+- Tilesheet path
+- Tilesheet size
+- Numero de pantalles
+- Disposició pantalles (identificades per index)
+Exemple:
+12
+ 34
+
+PER CADA PANTALLA:
+- Identificador
+
+- Definició pantalla, objectes estàtics (codi identificador dels tiles amb lletres, desde A (0x41))
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X                                      X
+X                                      X
+X                                      X
+X                                      X
+X                                      X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+- Definició pantalla, objectes dinàmics
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+X                                      X
+X                                      X
+X                                      X
+X                                      X
+X                                      X
+XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+- Definició pantalla altres elements: posicio inici jugador, enemics, portal, etc,...
