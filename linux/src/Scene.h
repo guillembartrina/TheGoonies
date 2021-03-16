@@ -31,6 +31,8 @@ class Scene : public IScene
 
 	Level* level;
 
+	glm::ivec2 pos;
+
 };
 
 

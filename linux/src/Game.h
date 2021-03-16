@@ -15,7 +15,7 @@ class Game
 		return G;
 	}
 	
-	void init(int window_width, int window_height, IScene* scene);
+	void init(int windowWidth, int windowHeight, IScene* scene);
 	bool update(int deltaTime);
 	void render();
 	
@@ -37,7 +37,7 @@ class Game
 
 	private:
 
-	int window_width, window_height;
+	int windowWidth, windowHeight;
 
 	bool bPlay;
 	bool keys[256], specialKeys[256];

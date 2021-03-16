@@ -6,16 +6,16 @@
 
 Game::Game()
 {
-	window_width = window_height = 0;
+	windowWidth = windowHeight = 0;
 	scene = nullptr;
 }
 
-void Game::init(int window_width, int window_height, IScene* scene)
+void Game::init(int windowWidth, int windowHeight, IScene* scene)
 {
 	bPlay = true;
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-	this->window_width = window_width;
-	this->window_height = window_height;
+	this->windowWidth = windowWidth;
+	this->windowHeight = windowHeight;
 	this->scene = scene;
 	this->scene->init();
 }
@@ -77,12 +77,12 @@ bool Game::getSpecialKey(int key) const
 
 int Game::getWindowWidth() const
 {
-	return window_width;
+	return windowWidth;
 }
 
 int Game::getWindowHeight() const
 {
-	return window_height;
+	return windowHeight;
 }
 
 void Game::changeScene(IScene* scene)

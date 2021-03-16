@@ -7,8 +7,7 @@
 #include "Texture.h"
 #include "Tilemap.h"
 
-#define WINDOW_X_TILES 40
-#define WINDOW_Y_TILES	20
+static glm::ivec2 roomSize = glm::vec2(32, 22);
 
 class Level
 {
@@ -20,15 +19,15 @@ class Level
 
 	void render() const;
 
-	glm::ivec2 getMapSize() const;
+	glm::ivec2 getSize() const;
 
 	private:
 
 	std::string name;
-	std::string tilesheetPath;
-	glm::ivec2 tilesheetSize;
-	glm::ivec2 mapSize;
-	int* map;
+	glm::ivec2 size;
+	int* level;
+	std::string tsPath;
+	glm::ivec2 tsSize;
 	
 	Tilemap* tileMap;
 
