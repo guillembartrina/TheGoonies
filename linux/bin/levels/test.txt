@@ -1,6 +1,6 @@
 Name
-images/varied.png
-2 2
+images/tileset.png
+26 4
 10 8
 AAAAAAAAAB
 AAAAAAAAAB

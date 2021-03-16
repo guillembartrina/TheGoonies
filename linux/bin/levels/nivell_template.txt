@@ -1,16 +1,17 @@
 - Nom nivell
 - Tilesheet path
 - Tilesheet size
-- Numero de pantalles
-- Disposició pantalles (identificades per index)
+- Numero de sales
+- Sales x Sales
+- Disposició sales (identificades per index)
 Exemple:
 12
- 34
+ 3
 
-PER CADA PANTALLA:
+PER CADA SALA:
 - Identificador
 
-- Definició pantalla, objectes estàtics (codi identificador dels tiles amb lletres, desde A (0x41))
+- Definició sala, objectes estàtics (codi identificador dels tiles amb lletres, desde A (0x41))
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 X                                      X
 X                                      X
