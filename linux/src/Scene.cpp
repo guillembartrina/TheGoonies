@@ -21,14 +21,16 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-	projection = glm::ortho(pos.x + 0.f, pos.x + float(Game::instance().getWindowWidth() - 1), pos.y + float(Game::instance().getWindowHeight() - 1), pos.y + 0.f);
 
 	level = new Level("levels/test.txt", program);
+	glm::vec4 p = level->getProjection(pos);
+	projection = glm::ortho(p.x, p.y, p.z, p.w);
 }
 
 void Scene::update(int deltaTime)
 {
-	projection = glm::ortho(pos.x + 0.f, pos.x + float(Game::instance().getWindowWidth() - 1), pos.y + float(Game::instance().getWindowHeight() - 1), pos.y + 0.f);
+	glm::vec4 p = level->getProjection(pos);
+	projection = glm::ortho(p.x, p.y, p.z, p.w);
 	if(Game::instance().getKey('a'))
 	{
 		pos += glm::ivec2(-32, 0);

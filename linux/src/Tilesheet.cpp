@@ -22,10 +22,10 @@ glm::vec4 Tilesheet::getTexCoords(int index)
     int row = index / size.x, column = index % size.x;
     if(row >= size.y) std::cerr << "Tilesheet invalid index" << std::endl;
 
-    return glm::vec4(tileSize.x * row,
-                     tileSize.y * column,
-                     tileSize.x * (row + 1) - halfTexel.x,
-                     tileSize.y * (column + 1) - halfTexel.y);
+    return glm::vec4(tileSize.x * column,
+                     tileSize.y * row,
+                     tileSize.x * (column + 1) - halfTexel.x,
+                     tileSize.y * (row + 1) - halfTexel.y);
 }
 
 void Tilesheet::use() const

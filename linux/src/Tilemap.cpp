@@ -3,7 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-Tilemap::Tilemap(const glm::ivec2& origin, const glm::ivec2& mapSize, int* map, const glm::ivec2& tileSize, const std::string& tilesheetPath, const glm::ivec2& tilesheetSize, const Program& program)
+Tilemap::Tilemap(const glm::vec2& origin, const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const std::string& tilesheetPath, const glm::ivec2& tilesheetSize, const Program& program)
 {
     tilesheet = new Tilesheet(tilesheetPath, tilesheetSize);
     buildTilemap(origin, mapSize, map, tileSize, program);
@@ -24,7 +24,7 @@ void Tilemap::render() const
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 }
 
-void Tilemap::buildTilemap(const glm::ivec2& origin, const glm::ivec2& mapSize, int* map, const glm::ivec2& tileSize, const Program& program)
+void Tilemap::buildTilemap(const glm::vec2& origin, const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const Program& program)
 {
     int tile;
     glm::vec2 position;

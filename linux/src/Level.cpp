@@ -8,14 +8,14 @@
 Level::Level(const std::string& path, const Program& program)
 {
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
-    glm::ivec2 tileSize = glm::vec2(Game::instance().getWindowWidth() / roomSize.x, Game::instance().getWindowHeight() / roomSize.y);
+    glm::vec2 tileSize = glm::vec2(Game::instance().getWindowWidth() / float(roomSize.x), Game::instance().getWindowHeight() / float(roomSize.y));
     tileMap = new Tilemap(glm::ivec2(0, 0), size, level, tileSize, tsPath, tsSize, program);
 }
 
 Level::~Level()
 {
     delete tileMap;
-    delete level;
+    delete[] level;
 }
 
 void Level::render() const
@@ -26,6 +26,16 @@ void Level::render() const
 glm::ivec2 Level::getSize() const
 {
     return size;
+}
+
+glm::vec4 Level::getProjection(const glm::ivec2& position) const
+{
+    int windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
+    float pL = (position.x / windowX) * windowX;
+    float pT = (position.y / windowY) * windowY;
+    float pB = pT + windowY - 1;
+    float pR = pL + windowX - 1;
+    return glm::vec4(pL, pR, pB, pT); 
 }
 
 bool Level::load(const std::string& path) //Add loading errors returning 'false'

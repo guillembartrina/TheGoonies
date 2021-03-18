@@ -24,10 +24,6 @@ class Tilesheet
 	glm::ivec2 size;
     glm::vec2 tileSize, halfTexel;
     Texture texture;
-	//glm::ivec2 position, mapSize, tilesheetSize;
-	//int tileSize, blockSize;
-	//glm::vec2 tileTexSize;
-
 };
 
 

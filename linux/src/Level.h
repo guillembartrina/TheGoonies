@@ -20,6 +20,7 @@ class Level
 	void render() const;
 
 	glm::ivec2 getSize() const;
+	glm::vec4 getProjection(const glm::ivec2& position) const;
 
 	private:
 
