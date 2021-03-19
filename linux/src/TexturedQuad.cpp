@@ -3,7 +3,7 @@
 #include "TexturedQuad.h"
 
 
-TexturedQuad *TexturedQuad::createTexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProgram &program)
+TexturedQuad *TexturedQuad::createTexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], Program &program)
 {
 	TexturedQuad *quad = new TexturedQuad(geom, texCoords, program);
 
@@ -11,7 +11,7 @@ TexturedQuad *TexturedQuad::createTexturedQuad(glm::vec2 geom[2], glm::vec2 texC
 }
 
 
-TexturedQuad::TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProgram &program)
+TexturedQuad::TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], Program &program)
 {
 	float vertices[24] = {geom[0].x, geom[0].y, texCoords[0].x, texCoords[0].y, 
 												geom[1].x, geom[0].y, texCoords[1].x, texCoords[0].y, 
@@ -25,8 +25,10 @@ TexturedQuad::TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProg
 	glGenBuffers(1, &vbo);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glBufferData(GL_ARRAY_BUFFER, 24 * sizeof(float), vertices, GL_STATIC_DRAW);
-	posLocation = program.bindVertexAttribute("position", 2, 4*sizeof(float), 0);
-	texCoordLocation = program.bindVertexAttribute("texCoord", 2, 4*sizeof(float), (void *)(2*sizeof(float)));
+	posLocation = program.getAttributeLocation("position");
+	glVertexAttribPointer(posLocation, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), 0);
+	texCoordLocation = program.getAttributeLocation("texCoord");
+	glVertexAttribPointer(texCoordLocation, 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void *)(2*sizeof(float)));
 }
 
 void TexturedQuad::render(const Texture &tex) const

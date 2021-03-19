@@ -8,6 +8,7 @@
 #include "Program.h"
 #include "Texture.h"
 #include "Level.h"
+#include "Text.h"
 
 
 class Scene : public IScene
@@ -32,6 +33,8 @@ class Scene : public IScene
 	Level* level;
 
 	glm::ivec2 pos;
+
+	Text text;
 
 };
 

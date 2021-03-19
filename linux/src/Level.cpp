@@ -8,7 +8,7 @@
 
 Level::Level(const std::string& path, const Program& program)
 {
-    cam = glm::ivec2(1, 1);
+    cam = glm::ivec2(0, 0);
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
     tileMap = new Tilemap(mapSize, map, tileSize, tsPath, tsSize, program);
 }

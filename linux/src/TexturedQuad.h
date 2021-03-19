@@ -2,9 +2,9 @@
 #define _TEXTURED_QUAD_INCLUDE
 
 
-#include <glm/glm.hpp>
+#include "glm/glm.hpp"
 #include "Texture.h"
-#include "ShaderProgram.h"
+#include "Program.h"
 
 
 class TexturedQuad
@@ -12,9 +12,9 @@ class TexturedQuad
 
 public:
 	// Textured quads can only be created inside an OpenGL context
-	static TexturedQuad *createTexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProgram &program);
+	static TexturedQuad *createTexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], Program &program);
 
-	TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], ShaderProgram &program);
+	TexturedQuad(glm::vec2 geom[2], glm::vec2 texCoords[2], Program &program);
 
 	void render(const Texture &tex) const;
 	void free();

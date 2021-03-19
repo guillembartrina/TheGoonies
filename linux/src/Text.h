@@ -1,11 +1,11 @@
 #ifndef _TEXT_INCLUDE
 #define _TEXT_INCLUDE
 
-
+#include <string>
 #include <ft2build.h>
 #include FT_FREETYPE_H
 #include "Texture.h"
-#include "ShaderProgram.h"
+#include "Program.h"
 #include "TexturedQuad.h"
 
 
@@ -36,10 +36,10 @@ public:
 	bool init(const char *filename);
 	void destroy();
 	
-	ShaderProgram &getProgram();
+	Program &getProgram();
 	int getSize() const;
 	void render(char c, const glm::vec2 &pixel, int size, const glm::vec4 &color);
-	void render(const string &str, const glm::vec2 &pixel, int size, const glm::vec4 &color);
+	void render(const std::string &str, const glm::vec2 &pixel, int size, const glm::vec4 &color);
 	
 private:
 	void initShaders();
@@ -51,7 +51,7 @@ private:
 	FT_Face face;
 	CharMetrics chars[NUM_CHARACTERS];
 	Texture textureAtlas;
-	ShaderProgram program;
+	Program program;
 	TexturedQuad *quad;
 
 	static bool bLibInit;

@@ -25,6 +25,7 @@ void Scene::init()
 	level = new Level("levels/test.txt", program);
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
+	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
 }
 
 void Scene::update(int deltaTime)
@@ -55,6 +56,8 @@ void Scene::render()
 
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
+
+	text.render("DUDE", glm::vec2(50, 50), 24, glm::vec4(1, 1, 1, 1));
 }
 
 void Scene::initShaders()

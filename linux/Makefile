@@ -20,7 +20,7 @@ $(TARJET): $(OBJ_FILES)
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	@mkdir -p $(BUILD_DIR)
-	$(CC) $(FLAGS) $(EXTRA_FLAGS) -I$(INCLUDE_DIR) -I$(SRC_DIR) -I/usr/include/freetype -c -o $@ $<
+	$(CC) $(FLAGS) $(EXTRA_FLAGS) -I$(INCLUDE_DIR) -I$(SRC_DIR) -I/usr/include/freetype2 -c -o $@ $<
 
 clean:
 	rm -f $(OBJ_FILES)
