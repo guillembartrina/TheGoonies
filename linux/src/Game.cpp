@@ -2,7 +2,6 @@
 #include <GL/glut.h>
 
 #include "Game.h"
-#include "Scene.h"
 
 Game::Game()
 {

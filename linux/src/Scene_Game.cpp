@@ -1,4 +1,4 @@
-#include "Scene.h"
+#include "Scene_Game.h"
 
 #include "Game.h"
 
@@ -7,18 +7,18 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Scene::Scene()
+Scene_Game::Scene_Game()
 {
 	pos = glm::ivec2(0, 0);
 }
 
-Scene::~Scene()
+Scene_Game::~Scene_Game()
 {
 	delete level;
 }
 
 
-void Scene::init()
+void Scene_Game::init()
 {
 	initShaders();
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
@@ -28,7 +28,7 @@ void Scene::init()
 	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
 }
 
-void Scene::update(int deltaTime)
+void Scene_Game::update(int deltaTime)
 {
 	if(Game::instance().getKey('a'))
 	{
@@ -48,7 +48,7 @@ void Scene::update(int deltaTime)
 	}
 }
 
-void Scene::render()
+void Scene_Game::render()
 {
 	program.use();
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
@@ -60,7 +60,7 @@ void Scene::render()
 	text.render("DUDE", glm::vec2(50, 50), 24, glm::vec4(1, 1, 1, 1));
 }
 
-void Scene::initShaders()
+void Scene_Game::initShaders()
 {
 	Shader vert(ShaderType_Vertex), frag(ShaderType_Fragment);
 

@@ -2,7 +2,7 @@
 #include <GL/glut.h>
 
 #include "Game.h"
-#include "Scene.h"
+#include "Scene_Menu.h"
 
 #pragma comment(linker, "/subsystem:\"windows\" /entry:\"mainCRTStartup\"")
 
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 	glewExperimental = GL_TRUE;
 	glewInit();
 	
-	Game::instance().init(WINDOW_WIDTH, WINDOW_HEIGHT, new Scene());
+	Game::instance().init(WINDOW_WIDTH, WINDOW_HEIGHT, new Scene_Menu());
 	prevTime = glutGet(GLUT_ELAPSED_TIME);
 	glutMainLoop();
 
