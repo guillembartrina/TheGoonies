@@ -21,16 +21,14 @@ Scene::~Scene()
 void Scene::init()
 {
 	initShaders();
-
+	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	level = new Level("levels/test.txt", program);
-	glm::vec4 p = level->getProjection(pos);
-	projection = glm::ortho(p.x, p.y, p.z, p.w);
+	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
+
 }
 
 void Scene::update(int deltaTime)
 {
-	glm::vec4 p = level->getProjection(pos);
-	projection = glm::ortho(p.x, p.y, p.z, p.w);
 	if(Game::instance().getKey('a'))
 	{
 		pos += glm::ivec2(-32, 0);
@@ -54,26 +52,22 @@ void Scene::render()
 	program.use();
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
-	level->render();
+
+	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
+	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
 }
 
 void Scene::initShaders()
 {
 	Shader vert(ShaderType_Vertex), frag(ShaderType_Fragment);
 
-	vert.load_fromFile("shaders/texture.vert");
+	vert.load_fromFile("shaders/default.vert");
 	vert.compile();
-	frag.load_fromFile("shaders/texture.frag");
+	frag.load_fromFile("shaders/default.frag");
 	frag.compile();
 	program.attachShader(vert);
 	program.attachShader(frag);
 	program.link();
-
-	/*
-	GLint count;
-	glGetProgramiv(program.getId(), GL_ACTIVE_ATTRIBUTES, &count);
-	std::cout << count;
-	*/
 }
 
 

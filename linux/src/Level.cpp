@@ -4,38 +4,41 @@
 
 #include <iostream>
 #include <fstream>
+#include "glm/gtc/matrix_transform.hpp"
 
 Level::Level(const std::string& path, const Program& program)
 {
+    cam = glm::ivec2(1, 1);
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
-    glm::vec2 tileSize = glm::vec2(Game::instance().getWindowWidth() / float(roomSize.x), Game::instance().getWindowHeight() / float(roomSize.y));
-    tileMap = new Tilemap(glm::ivec2(0, 0), size, level, tileSize, tsPath, tsSize, program);
+    tileMap = new Tilemap(mapSize, map, tileSize, tsPath, tsSize, program);
 }
 
 Level::~Level()
 {
     delete tileMap;
-    delete[] level;
+    delete[] map;
 }
 
-void Level::render() const
+void Level::render(const glm::vec4& rect, const Program& program) const
 {
+    glm::mat4 modelView = glm::mat4(1.f);
+
+    glm::vec2 translate2 = glm::vec2(rect.x, rect.w); // Lower the map
+    modelView = glm::translate(modelView, glm::vec3(translate2, 0.f));
+
+    glm::vec2 scale = glm::vec2(rect.y - rect.x, rect.z - rect.w) / (glm::vec2(roomSize) * tileSize); // World coordinates -> window coordinates
+    modelView = glm::scale(modelView, glm::vec3(scale, 1.f));
+
+    glm::vec2 translate1 = -1.f * glm::vec2(cam) * glm::vec2(roomSize) * tileSize; // Room selection
+    modelView = glm::translate(modelView, glm::vec3(translate1, 0.f));
+
+    program.setUniformValue(program.getUniformLocation("modelview"), modelView);
     tileMap->render();
 }
 
-glm::ivec2 Level::getSize() const
+glm::ivec2 Level::getMapSize() const
 {
-    return size;
-}
-
-glm::vec4 Level::getProjection(const glm::ivec2& position) const
-{
-    int windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
-    float pL = (position.x / windowX) * windowX;
-    float pT = (position.y / windowY) * windowY;
-    float pB = pT + windowY - 1;
-    float pR = pL + windowX - 1;
-    return glm::vec4(pL, pR, pB, pT); 
+    return mapSize;
 }
 
 bool Level::load(const std::string& path) //Add loading errors returning 'false'
@@ -53,7 +56,7 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
     file >> rooms;
     file >> roomsX >> roomsY;
     getline(file, dummy); //Next line
-    size = glm::ivec2(roomsX * roomSize.x, roomsY * roomSize.y);
+    mapSize = glm::ivec2(roomsX * roomSize.x, roomsY * roomSize.y);
     glm::ivec2* roomPositions = new glm::ivec2[rooms];
     for(int j = 0; j < roomsY; j++)
     {
@@ -67,8 +70,8 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
         }
     }
 
-    level = new int[size.x * size.y];
-    for(int i = 0; i < size.x; i++) for(int j = 0; j < size.y; j++) level[j*size.x+i] = -1;
+    map = new int[mapSize.x * mapSize.y];
+    for(int i = 0; i < mapSize.x; i++) for(int j = 0; j < mapSize.y; j++) map[j*mapSize.x+i] = -1;
 
     int room;
     char index;
@@ -84,7 +87,7 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
             for(int i = 0; i < roomSize.x; i++)
             {
                 index = dummy[i];
-                level[(roomOffsetY+j)*size.x+(roomOffsetX+i)] = (index-' ');
+                map[(roomOffsetY+j)*mapSize.x+(roomOffsetX+i)] = (index-' ');
             }
         }
     }

@@ -1,0 +1,9 @@
+glm::vec4 Level::getProjection(const glm::ivec2& position) const
+{
+    int windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
+    float pL = (position.x / windowX) * windowX;
+    float pT = (position.y / windowY) * windowY;
+    float pB = pT + windowY - 1;
+    float pR = pL + windowX - 1;
+    return glm::vec4(pL, pR, pB, pT); 
+}

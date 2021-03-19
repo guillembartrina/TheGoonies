@@ -7,7 +7,8 @@
 #include "Texture.h"
 #include "Tilemap.h"
 
-static glm::ivec2 roomSize = glm::vec2(32, 22);
+static glm::ivec2 roomSize = glm::ivec2(32, 22);
+static glm::vec2 tileSize = glm::vec2(16.f, 16.f);
 
 class Level
 {
@@ -17,20 +18,21 @@ class Level
 	Level(const std::string& path, const Program& program);
 	~Level();
 
-	void render() const;
+	void render(const glm::vec4& rect, const Program& program) const;
 
-	glm::ivec2 getSize() const;
-	glm::vec4 getProjection(const glm::ivec2& position) const;
+	glm::ivec2 getMapSize() const;
 
 	private:
 
 	std::string name;
-	glm::ivec2 size;
-	int* level;
+	glm::ivec2 mapSize;
+	int* map;
 	std::string tsPath;
 	glm::ivec2 tsSize;
 	
 	Tilemap* tileMap;
+
+	glm::ivec2 cam;
 
 	bool load(const std::string& path);
 

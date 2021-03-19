@@ -3,10 +3,10 @@
 #include <iostream>
 #include <fstream>
 
-Tilemap::Tilemap(const glm::vec2& origin, const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const std::string& tilesheetPath, const glm::ivec2& tilesheetSize, const Program& program)
+Tilemap::Tilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const std::string& tilesheetPath, const glm::ivec2& tilesheetSize, const Program& program)
 {
     tilesheet = new Tilesheet(tilesheetPath, tilesheetSize);
-    buildTilemap(origin, mapSize, map, tileSize, program);
+    buildTilemap(mapSize, map, tileSize, program);
 }
 
 Tilemap::~Tilemap()
@@ -24,7 +24,7 @@ void Tilemap::render() const
 	glDrawArrays(GL_TRIANGLES, 0, elements);
 }
 
-void Tilemap::buildTilemap(const glm::vec2& origin, const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const Program& program)
+void Tilemap::buildTilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const Program& program)
 {
     int tile;
     glm::vec2 position;
@@ -39,7 +39,7 @@ void Tilemap::buildTilemap(const glm::vec2& origin, const glm::ivec2& mapSize, i
 
             if(tile != -1)
             {
-                position = glm::vec2(origin) + glm::vec2(tileSize.x * i, tileSize.y * j);
+                position = glm::vec2(tileSize.x * i, tileSize.y * j);
 
                 vertices.push_back(position.x); vertices.push_back(position.y);
                 vertices.push_back(position.x + tileSize.x); vertices.push_back(position.y);

@@ -30,7 +30,6 @@ glm::vec4 Tilesheet::getTexCoords(int index)
 
 void Tilesheet::use() const
 {
-    //Enable texture0??
     glEnable(GL_TEXTURE_2D);
     texture.use();
 }
