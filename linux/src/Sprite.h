@@ -31,7 +31,6 @@ class Sprite
 
 	GLuint VAO;
 	GLuint VBO;
-	GLint posLocation, texCoordLocation;
 	Texture* spritesheet;
 
 	glm::vec2 position;
