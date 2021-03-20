@@ -20,13 +20,9 @@ X                                      X
 X                                      X
 XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-- Definició pantalla, objectes dinàmics
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-X                                      X
-X                                      X
-X                                      X
-X                                      X
-X                                      X
-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+:Definició pantalla, objectes dinàmics*
+
+- Spawnpoint (num pantalla, tileX, tileY)
+- Llista spawnpoints monstres (mateix format que personatge)
 
 - Definició pantalla altres elements: posicio inici jugador, enemics, portal, etc,...
