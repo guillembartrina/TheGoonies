@@ -10,7 +10,7 @@ Level::Level(const std::string& path, const Program& program)
 {
     cam = glm::ivec2(0, 0);
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
-    tileMap = new Tilemap(mapSize, map, tileSize, tsPath, tsSize, program);
+    tileMap = new Tilemap(mapSize, map, tileSize, new Tilesheet(tsPath, tsSize), program);
 }
 
 Level::~Level()
@@ -21,18 +21,21 @@ Level::~Level()
 
 void Level::render(const glm::vec4& rect, const Program& program) const
 {
-    glm::mat4 modelView = glm::mat4(1.f);
+    glm::mat4 modelview = glm::mat4(1.f);
+    glm::mat4 camview = glm::mat4(1.f);
 
     glm::vec2 translate2 = glm::vec2(rect.x, rect.w); // Lower the map
-    modelView = glm::translate(modelView, glm::vec3(translate2, 0.f));
+    camview = glm::translate(camview, glm::vec3(translate2, 0.f));
 
     glm::vec2 scale = glm::vec2(rect.y - rect.x, rect.z - rect.w) / (glm::vec2(roomSize) * tileSize); // World coordinates -> window coordinates
-    modelView = glm::scale(modelView, glm::vec3(scale, 1.f));
+    camview = glm::scale(camview, glm::vec3(scale, 1.f));
+
+    program.setUniformValue(program.getUniformLocation("camview"), camview);
 
     glm::vec2 translate1 = -1.f * glm::vec2(cam) * glm::vec2(roomSize) * tileSize; // Room selection
-    modelView = glm::translate(modelView, glm::vec3(translate1, 0.f));
+    modelview = glm::translate(modelview, glm::vec3(translate1, 0.f));
 
-    program.setUniformValue(program.getUniformLocation("modelview"), modelView);
+    program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
 }
 

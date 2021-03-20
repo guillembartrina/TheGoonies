@@ -52,6 +52,7 @@ void Scene_Game::render()
 {
 	program.use();
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
+	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0f));
 	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
 
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();

@@ -3,9 +3,9 @@
 #include <iostream>
 #include <fstream>
 
-Tilemap::Tilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const std::string& tilesheetPath, const glm::ivec2& tilesheetSize, const Program& program)
+Tilemap::Tilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, Tilesheet* tilesheet, const Program& program)
 {
-    tilesheet = new Tilesheet(tilesheetPath, tilesheetSize);
+    this->tilesheet = tilesheet;
     buildTilemap(mapSize, map, tileSize, program);
 }
 

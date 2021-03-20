@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "Level.h"
 #include "Text.h"
+#include "Sprite.h"
 
 
 class Scene_Menu : public IScene
@@ -28,6 +29,9 @@ class Scene_Menu : public IScene
 	glm::mat4 projection;
 
 	Text text;
+
+	Program program;
+	Sprite* sprite;
 
 };
 
