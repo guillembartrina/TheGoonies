@@ -7,7 +7,7 @@
 #include "Texture.h"
 #include "Tilemap.h"
 
-static glm::ivec2 roomSize = glm::ivec2(32, 22);
+static glm::ivec2 roomSize = glm::ivec2(32, 20);
 static glm::vec2 tileSize = glm::vec2(16.f, 16.f);
 
 class Level

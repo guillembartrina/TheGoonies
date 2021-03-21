@@ -22,7 +22,7 @@ void Scene_Game::init()
 {
 	initShaders();
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
-	level = new Level("levels/test.txt", program);
+	level = new Level("levels/1.txt", program);
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
 	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
