@@ -7,6 +7,7 @@ Game::Game()
 {
 	windowWidth = windowHeight = 0;
 	scene = nullptr;
+	newScene = nullptr;
 }
 
 void Game::init(int windowWidth, int windowHeight, IScene* scene)
@@ -21,6 +22,14 @@ void Game::init(int windowWidth, int windowHeight, IScene* scene)
 
 bool Game::update(int deltaTime)
 {
+	if(newScene != nullptr)
+	{
+		delete scene;
+		scene = newScene;
+		newScene = nullptr;
+		scene->init();
+	}
+
 	if(scene != nullptr) scene->update(deltaTime);
 	return bPlay;
 }
@@ -86,9 +95,7 @@ int Game::getWindowHeight() const
 
 void Game::changeScene(IScene* scene)
 {
-	delete this->scene;
-	this->scene = scene;
-	this->scene->init();
+	this->newScene = scene;
 }
 
 

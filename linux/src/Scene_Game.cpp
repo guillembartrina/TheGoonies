@@ -54,7 +54,7 @@ void Scene_Game::render()
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0f));
 	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
-
+	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
 

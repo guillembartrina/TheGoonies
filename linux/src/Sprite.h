@@ -5,7 +5,43 @@
 #include "glm/glm.hpp"
 #include "Texture.h"
 #include "Program.h"
-#include "AnimKeyframes.h"
+
+struct Frame
+{
+	Frame(float u, float v, float w, float h) : u(u), v(v), w(w), h(h) {}
+	
+	float u, v, w, h;
+};
+
+struct KeyFrame
+{
+	KeyFrame(int id, float duration) : id(id), duration(duration) {}
+
+	int id;
+	float duration;
+};
+
+
+struct Animation
+{
+	Animation(const std::vector<int>& ids, const std::vector<float>& times)
+	{
+		for(int i = 0; i < int(ids.size()); i++)
+		{
+			keyframes.push_back(new KeyFrame(ids[i], times[i]));
+		}
+	}
+
+	~Animation()
+	{
+		for(KeyFrame* kf : keyframes)
+		{
+			delete kf;
+		}
+	}
+
+	std::vector<KeyFrame *> keyframes;
+};
 
 class Sprite
 {
@@ -18,11 +54,11 @@ class Sprite
 	void update(int deltaTime);
 	void render(const Program& program) const;
 
-	void setNumberAnimations(int nAnimations);
-	void setAnimationSpeed(int animId, int keyframesPerSec);
-	void addKeyframe(int animId, const glm::vec2 &frame);
-	void changeAnimation(int animId);
-	int animation() const;
+	void addFrame(Frame* frame);
+	void addAnimation(Animation* animation);
+	void setFrame(int id);
+	void setAnimation(int id);
+	int getAnimation() const;
 	
 	void setPosition(const glm::vec2 &pos);
 	glm::vec2 getPosition() const;
@@ -35,10 +71,10 @@ class Sprite
 
 	glm::vec2 position;
 
-	int currentAnimation, currentKeyframe;
-	float timeAnimation;
-	glm::vec2 texCoordDispl;
-	vector<AnimKeyframes> animations;
+	int currentAnimation, currentFrame, currentKeyFrame;
+	float currentTime;
+	std::vector<Frame *> frames;
+	std::vector<Animation *> animations;
 
 };
 

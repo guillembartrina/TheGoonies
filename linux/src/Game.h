@@ -42,7 +42,7 @@ class Game
 	bool bPlay;
 	bool keys[256], specialKeys[256];
 
-	IScene* scene;
+	IScene* scene, * newScene;
 
 };
 

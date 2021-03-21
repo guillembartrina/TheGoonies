@@ -73,6 +73,10 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
         }
     }
 
+    int spawnRoom, spawnX, spawnY;
+    file >> spawnRoom >> spawnX >> spawnY;
+    spawn = glm::ivec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
+
     map = new int[mapSize.x * mapSize.y];
     for(int i = 0; i < mapSize.x; i++) for(int j = 0; j < mapSize.y; j++) map[j*mapSize.x+i] = -1;
 

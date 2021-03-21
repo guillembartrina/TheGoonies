@@ -41,10 +41,20 @@ void Scene_Menu::init()
 	Texture* textu = new Texture();
 	textu->loadFromFile("images/rocks.jpg", PixelFormat::TEXTURE_PIXEL_FORMAT_RGB);
 	sprite = new Sprite(glm::vec2(400, 400), glm::vec2(100, 100), textu, program);
+
+	sprite->addFrame(new Frame(0.f, 0.f, 0.25f, 0.25f));
+	sprite->addFrame(new Frame(0.25f, 0.f, 0.25f, 0.25f));
+	sprite->addFrame(new Frame(0.f, 0.25f, 0.25f, 0.25f));
+	sprite->addFrame(new Frame(0.25f, 0.25f, 0.25f, 0.25f));
+
+	sprite->addAnimation(new Animation({0, 1, 2, 3}, {1000.f, 1000.f, 1000.f, 1000.f}));
+
+	sprite->setAnimation(0);
 }
 
 void Scene_Menu::update(int deltaTime)
 {
+	sprite->update(deltaTime);
 	if(Game::instance().getKey('p'))
 	{
 		Game::instance().changeScene(new Scene_Game());
@@ -84,6 +94,7 @@ void Scene_Menu::render()
 	text.render("Press C to credits", glm::vec2(50, 280), 30, glm::vec4(1, 1, 1, 1));
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0));
+	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
 	sprite->render(program);
 }
 

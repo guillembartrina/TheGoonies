@@ -29,6 +29,7 @@ class Level
 	int* map;
 	std::string tsPath;
 	glm::ivec2 tsSize;
+	glm::ivec2 spawn;
 	
 	Tilemap* tileMap;
 

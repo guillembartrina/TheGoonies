@@ -25,27 +25,36 @@ Sprite::Sprite(const glm::vec2& position, const glm::vec2& size, Texture* sprite
 	glVertexAttribPointer(program.getAttributeLocation("texCoord"), 2, GL_FLOAT, GL_FALSE, 4*sizeof(float), (void *)(2*sizeof(float)));
 	glEnableVertexAttribArray(texCoordLocation);
 	this->spritesheet = spritesheet;
-	currentAnimation = -1;
 	this->position = position;
+	currentFrame = -1;
+	currentAnimation = -1;
 }
 
 Sprite::~Sprite()
 {
-	glDeleteBuffers(1, &VBO);
+	for(Animation* a : animations)
+	{
+		delete a;
+	}
+	for(Frame* f : frames)
+	{
+		delete f;
+	}
 	delete spritesheet;
+	glDeleteBuffers(1, &VBO);
 }
 
 void Sprite::update(int deltaTime)
 {
 	if(currentAnimation >= 0)
 	{
-		timeAnimation += deltaTime;
-		while(timeAnimation > animations[currentAnimation].millisecsPerKeyframe)
+		currentTime += deltaTime;
+		while(currentTime > animations[currentAnimation]->keyframes[currentKeyFrame]->duration)
 		{
-			timeAnimation -= animations[currentAnimation].millisecsPerKeyframe;
-			currentKeyframe = (currentKeyframe + 1) % animations[currentAnimation].keyframeDispl.size();
+			currentTime -= animations[currentAnimation]->keyframes[currentKeyFrame]->duration;
+			currentKeyFrame = (currentKeyFrame + 1) % animations[currentAnimation]->keyframes.size();
 		}
-		texCoordDispl = animations[currentAnimation].keyframeDispl[currentKeyframe];
+		currentFrame = animations[currentAnimation]->keyframes[currentKeyFrame]->id;
 	}
 }
 
@@ -53,43 +62,51 @@ void Sprite::render(const Program& program) const
 {
 	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
 	program.setUniformValue(program.getUniformLocation("modelview"), modelview);
-	//program.setUniformValue(program.getUniformLocation("texCoordDispl"), glm::vec2(texCoordDispl.x, texCoordDispl.y));
+
+	if(currentFrame == -1)
+	{
+		program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
+	}
+	else
+	{
+		program.setUniformValue(program.getUniformLocation("customTexCoord"), 1);
+		program.setUniformValue(program.getUniformLocation("frame"),
+			glm::vec4(frames[currentFrame]->u, frames[currentFrame]->v, frames[currentFrame]->w, frames[currentFrame]->h));
+	}
+	
 	spritesheet->use();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
 }
 
-void Sprite::setNumberAnimations(int nAnimations)
+void Sprite::addFrame(Frame* frame)
 {
-	animations.clear();
-	animations.resize(nAnimations);
+	frames.push_back(frame);
 }
 
-void Sprite::setAnimationSpeed(int animId, int keyframesPerSec)
+void Sprite::addAnimation(Animation* animation)
 {
-	if(animId < int(animations.size()))
-		animations[animId].millisecsPerKeyframe = 1000.f / keyframesPerSec;
+	animations.push_back(animation);
 }
 
-void Sprite::addKeyframe(int animId, const glm::vec2 &displacement)
+void Sprite::setFrame(int id)
 {
-	if(animId < int(animations.size()))
-		animations[animId].keyframeDispl.push_back(displacement);
+	if(id >= -1 && id < int(frames.size())) currentFrame = id;
 }
 
-void Sprite::changeAnimation(int animId)
+void Sprite::setAnimation(int id)
 {
-	if(animId < int(animations.size()))
+	if(id >= -1 && id < int(animations.size()))
 	{
-		currentAnimation = animId;
-		currentKeyframe = 0;
-		timeAnimation = 0.f;
-		texCoordDispl = animations[animId].keyframeDispl[0];
+		currentAnimation = id;
+		currentKeyFrame = 0;
+		currentFrame = animations[id]->keyframes[0]->id;
+		currentTime = 0.f;
 	}
 }
 
-int Sprite::animation() const
+int Sprite::getAnimation() const
 {
 	return currentAnimation;
 }
