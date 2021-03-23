@@ -46,6 +46,7 @@ void Scene_Game::update(int deltaTime)
 	{
 		pos += glm::ivec2(0, -32);
 	}
+	level->update(deltaTime);
 }
 
 void Scene_Game::render()

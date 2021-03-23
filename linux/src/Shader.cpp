@@ -42,7 +42,7 @@ void Shader::load_fromString(const std::string& source)
 bool Shader::load_fromFile(const std::string& path)
 {
     std::string source;
-    if(not readFile(path, source)) return false;
+    if(!readFile(path, source)) return false;
     const GLchar* src = source.c_str();
     glShaderSource(id, 1, &src, 0);
     loaded = true;

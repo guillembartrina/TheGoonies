@@ -58,10 +58,10 @@ void Sprite::update(int deltaTime)
 	}
 }
 
-void Sprite::render(const Program& program) const
+void Sprite::render(const Program& program, const glm::mat4 &modelview) const
 {
-	glm::mat4 modelview = glm::translate(glm::mat4(1.0f), glm::vec3(position.x, position.y, 0.f));
-	program.setUniformValue(program.getUniformLocation("modelview"), modelview);
+	glm::mat4 mv = glm::translate(glm::mat4(modelview), glm::vec3(position.x, position.y, 0.f));
+	program.setUniformValue(program.getUniformLocation("modelview"), mv);
 
 	if(currentFrame == -1)
 	{
@@ -73,7 +73,7 @@ void Sprite::render(const Program& program) const
 		program.setUniformValue(program.getUniformLocation("frame"),
 			glm::vec4(frames[currentFrame]->u, frames[currentFrame]->v, frames[currentFrame]->w, frames[currentFrame]->h));
 	}
-	
+	//program.setUniformValue(program.getUniformLocation("texCoordDispl"), glm::vec2(texCoordDispl.x, texCoordDispl.y));
 	spritesheet->use();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);

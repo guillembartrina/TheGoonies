@@ -11,6 +11,9 @@ Level::Level(const std::string& path, const Program& program)
     cam = glm::ivec2(0, 0);
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
     tileMap = new Tilemap(mapSize, map, tileSize, new Tilesheet(tsPath, tsSize), program);
+	player = new Player(glm::ivec2(0,0), program);
+	player->setPosition(spawnPlayer*8);
+	player->setTileMap(tileMap);
 }
 
 Level::~Level()
@@ -37,6 +40,11 @@ void Level::render(const glm::vec4& rect, const Program& program) const
 
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
+	player->render(program, modelview);
+}
+
+void Level::update(int deltatime) {
+	player->update(deltatime);
 }
 
 glm::ivec2 Level::getMapSize() const
@@ -100,6 +108,12 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
     }
 
     delete roomPositions;
+	
+	int playerSpawnX, playerSpawnY;
+
+	file >> playerSpawnX >> playerSpawnY;
+
+	spawnPlayer = glm::ivec2(playerSpawnX, playerSpawnY);
 
     file.close();
     return true;
