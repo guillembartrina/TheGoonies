@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "Game.h"
 
+#include "Level.h"
 
 #define JUMP_ANGLE_STEP 4
 #define JUMP_HEIGHT 96
@@ -17,33 +18,26 @@ enum PlayerAnims
 };
 
 
-Player::Player(const glm::ivec2 &tileMapPos, const Program &program)
+Player::Player(const Program& program)
 {
 	bJumping = false;
-	spritesheet.loadFromFile("images/rocks.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	sprite = new Sprite(glm::vec2(400, 400), glm::vec2(100, 100), &spritesheet, program);
-	/*sprite->setNumberAnimations(4);
-	
-		sprite->setAnimationSpeed(STAND_LEFT, 8);
-		sprite->addKeyframe(STAND_LEFT, glm::vec2(0.f, 0.f));
-		
-		sprite->setAnimationSpeed(STAND_RIGHT, 8);
-		sprite->addKeyframe(STAND_RIGHT, glm::vec2(0.25f, 0.f));
-		
-		sprite->setAnimationSpeed(MOVE_LEFT, 8);
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.25f));
-		sprite->addKeyframe(MOVE_LEFT, glm::vec2(0.f, 0.5f));
-		
-		sprite->setAnimationSpeed(MOVE_RIGHT, 8);
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.25f));
-		sprite->addKeyframe(MOVE_RIGHT, glm::vec2(0.25, 0.5f));
-		
-	sprite->changeAnimation(0);*/
-	tileMapDispl = tileMapPos;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
-	
+	spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
+	spritesheet.setWrapS(GL_CLAMP_TO_EDGE);
+	spritesheet.setWrapT(GL_CLAMP_TO_EDGE);
+	spritesheet.setMinFilter(GL_NEAREST);
+	spritesheet.setMagFilter(GL_NEAREST);
+
+	sprite = new Sprite(glm::vec2(0.f, 0.f), tileSize*2.f, &spritesheet, program);
+
+	for(int i = 0; i < 2; i++) sprite->addFrame(new Frame(i*0.25f, 0.f, 0.25f, 0.125f)); //0, 1
+	for(int i = 0; i < 3; i++) sprite->addFrame(new Frame(i*0.25f, 1.f*0.125f, 0.25f, 0.125f)); //2, 3, 4
+	sprite->addFrame(new Frame(0.f, 2.f*0.125f, 0.25f, 0.125f)); //5
+	sprite->addFrame(new Frame(0.f, 3.f*0.125f, 0.25f, 0.125f)); //6
+	for(int i = 0; i < 3; i++) sprite->addFrame(new Frame(i*0.25f, 4.f*0.125f, 0.25f, 0.125f)); //7,8,9
+	sprite->addFrame(new Frame(0.f, 5.f*0.125f, 0.25f, 0.125f)); //10
+	sprite->addFrame(new Frame(0.f, 6.f*0.125f, 0.25f, 0.125f)); //11
+
+	sprite->setFrame(3);
 }
 
 void Player::update(int deltaTime)
@@ -108,23 +102,23 @@ void Player::update(int deltaTime)
 		}
 	}*/
 	
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+	sprite->setPosition(posPlayer);
 }
 
-void Player::render(const Program &program, const glm::mat4 &modelview)
+void Player::render(const Program &program)
 {
-	sprite->render(program, modelview);
+	sprite->render(program);
 }
 
-void Player::setTileMap(Tilemap *tileMap)
+void Player::setLevel(Level *level)
 {
-	map = tileMap;
+	level = level;
 }
 
 void Player::setPosition(const glm::vec2 &pos)
 {
 	posPlayer = pos;
-	sprite->setPosition(glm::vec2(float(tileMapDispl.x + posPlayer.x), float(tileMapDispl.y + posPlayer.y)));
+	sprite->setPosition(pos);
 }
 
 

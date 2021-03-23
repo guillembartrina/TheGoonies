@@ -58,9 +58,9 @@ void Sprite::update(int deltaTime)
 	}
 }
 
-void Sprite::render(const Program& program, const glm::mat4 &modelview) const
+void Sprite::render(const Program& program) const
 {
-	glm::mat4 mv = glm::translate(glm::mat4(modelview), glm::vec3(position.x, position.y, 0.f));
+	glm::mat4 mv = glm::translate(glm::mat4(1.f), glm::vec3(position.x, position.y, 0.f));
 	program.setUniformValue(program.getUniformLocation("modelview"), mv);
 
 	if(currentFrame == -1)

@@ -30,6 +30,7 @@ class Scene_Game : public IScene
 
 	void initShaders();
 
+	Player* player;
 	Level* level;
 
 	glm::ivec2 pos;

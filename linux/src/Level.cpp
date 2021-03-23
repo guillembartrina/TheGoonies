@@ -11,15 +11,19 @@ Level::Level(const std::string& path, const Program& program)
     cam = glm::ivec2(0, 0);
     if(!load(path)) std::cerr << "Error reading level file!" << std::endl;
     tileMap = new Tilemap(mapSize, map, tileSize, new Tilesheet(tsPath, tsSize), program);
-	player = new Player(glm::ivec2(0,0), program);
-	player->setPosition(spawnPlayer*8);
-	player->setTileMap(tileMap);
 }
 
 Level::~Level()
 {
     delete tileMap;
     delete[] map;
+}
+
+void Level::spawn(Player* player)
+{
+    player->setLevel(this);
+    player->setPosition(spawnPos);
+    this->player = player;
 }
 
 void Level::render(const glm::vec4& rect, const Program& program) const
@@ -40,16 +44,12 @@ void Level::render(const glm::vec4& rect, const Program& program) const
 
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
-	player->render(program, modelview);
+
+	player->render(program);
 }
 
 void Level::update(int deltatime) {
 	player->update(deltatime);
-}
-
-glm::ivec2 Level::getMapSize() const
-{
-    return mapSize;
 }
 
 bool Level::load(const std::string& path) //Add loading errors returning 'false'
@@ -83,7 +83,7 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
 
     int spawnRoom, spawnX, spawnY;
     file >> spawnRoom >> spawnX >> spawnY;
-    spawn = glm::ivec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
+    spawnPos = glm::ivec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
 
     map = new int[mapSize.x * mapSize.y];
     for(int i = 0; i < mapSize.x; i++) for(int j = 0; j < mapSize.y; j++) map[j*mapSize.x+i] = -1;
@@ -108,12 +108,6 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
     }
 
     delete roomPositions;
-	
-	int playerSpawnX, playerSpawnY;
-
-	file >> playerSpawnX >> playerSpawnY;
-
-	spawnPlayer = glm::ivec2(playerSpawnX, playerSpawnY);
 
     file.close();
     return true;

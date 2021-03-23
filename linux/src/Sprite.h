@@ -52,7 +52,7 @@ class Sprite
 	~Sprite();
 
 	void update(int deltaTime);
-	void render(const Program& program, const glm::mat4 &modelview = glm::mat4(1.0f)) const;
+	void render(const Program& program) const;
 
 	void addFrame(Frame* frame);
 	void addAnimation(Animation* animation);
