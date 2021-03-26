@@ -6,10 +6,16 @@ Texture::Texture()
 {
 	wrapS = GL_REPEAT;
 	wrapT = GL_REPEAT;
-	minFilter = GL_LINEAR_MIPMAP_LINEAR;
-	magFilter = GL_LINEAR_MIPMAP_LINEAR;
+	minFilter = GL_NEAREST;
+	magFilter = GL_NEAREST;
 }
 
+Texture* Texture::createTexture(const std::string &filename, PixelFormat format)
+{
+	Texture* texture = new Texture();
+	texture->loadFromFile(filename, format);
+	return texture;
+}
 
 bool Texture::loadFromFile(const std::string &filename, PixelFormat format)
 {

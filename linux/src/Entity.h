@@ -6,31 +6,37 @@
 enum EntityType {PLAYER, VINE, MONSTER, OBSTACLE, DOOR, ITEM};
 
 class Level;
+
 class Entity
 {
 
 	public:
 
-	Entity(const Program& program, Texture* spritesheetPtr, glm::vec2 &size, glm::vec2 &pos, EntityType type);
+	Entity(EntityType type, const glm::vec2 &pos, const glm::vec2 &size, Texture* spritesheet, const Program& program);
 	void setLevel(Level *level);
 
 	void update(int deltaTime);
 	void render(const Program &program);
+
+	glm::vec2 getSize() const;
+
+	glm::vec2 getPosition() const;
 	void setPosition(const glm::vec2 &pos);
 	EntityType getType() const;
-	//TODO: static bool isColliding(Entity *a, Entity *b);
+	
+	static bool areColliding(Entity *a, Entity *b);
 
 	protected:
-	Sprite* sprite;
-	glm::vec2 position;
-	Level *level;
-	glm::vec2 size;
+
 	const EntityType type;
-	glm::vec2 velocity;
-	glm::vec2 acceleration;
+	glm::vec2 size;
+	glm::vec2 position, velocity, acceleration;
+	Sprite* sprite;
+
+	Level *level;
 };
 
 
-#endif // _PLAYER_INCLUDE
+#endif // _ENTITY_INCLUDE
 
 

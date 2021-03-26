@@ -17,6 +17,7 @@ class Texture
 	public:
 
 	Texture();
+	static Texture* createTexture(const std::string &filename, PixelFormat format);
 
 	bool loadFromFile(const std::string &filename, PixelFormat format);
 	void loadFromGlyphBuffer(unsigned char *buffer, int width, int height);

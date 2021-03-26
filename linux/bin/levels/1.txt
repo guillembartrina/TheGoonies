@@ -5,6 +5,12 @@ images/tileset.png
 1 1
 0
 0 13 8
+ &BCDEFGHIQRSTVWXYZ[\]`abcdghijklmnpqrstv
+'()*.23467<=>?JKLMNOwxyz{|}~
+!"#$%.89@AP^_efno
+5:;
++,-
+/01
 0
 '('('('('('('('('('('('('('('('(
 ('('('('('('('('('('('('('('('('

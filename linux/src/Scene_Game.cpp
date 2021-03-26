@@ -27,8 +27,8 @@ void Scene_Game::init()
 
 	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
 
-	level = new Level("levels/1.txt", program);
 	player = new Player(program);
+	level = new Level("levels/1.txt", program);
 	level->spawn(player);
 }
 

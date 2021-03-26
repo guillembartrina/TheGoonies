@@ -24,6 +24,7 @@ void Level::spawn(Player* player)
     player->setLevel(this);
     player->setPosition(spawnPos);
     this->player = player;
+    this->player->active = true;
 }
 
 void Level::render(const glm::vec4& rect, const Program& program) const
@@ -45,17 +46,200 @@ void Level::render(const glm::vec4& rect, const Program& program) const
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
 
-	player->render(program);
-	for (int i = 0; i < entities.size(); ++i) {
+	if(player) player->render(program);
+	for (unsigned int i = 0; i < entities.size(); ++i)
+    {
 		entities[i]->render(program);
 	}
 }
 
 void Level::update(int deltatime) {
-	player->update(deltatime);
-	for (int i = 0; i < entities.size(); ++i) {
+	if(player) player->update(deltatime);
+	for (unsigned int i = 0; i < entities.size(); ++i)
+    {
 		entities[i]->update(deltatime);
 	}
+}
+
+glm::ivec2 Level::getMapSize() const
+{
+    return mapSize;
+}
+
+bool Level::collisionMoveLeft(Entity* entity, glm::vec2& shouldbe) const
+{
+    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
+
+    int x = pos.x / tileSize.x;
+    int ymin = pos.y / tileSize.y, ymax = (pos.y + size.y - 1.f) / tileSize.y;
+
+    for(int y = ymin; y <= ymax; y++)
+    {
+        switch(collisionMap[map[y*mapSize.x+x]])
+        {
+            case CollisionType::FULL:
+            case CollisionType::RIGHT:
+                shouldbe = glm::vec2((x+1)*tileSize.x, pos.y);
+                return true;
+                break;
+            case CollisionType::LEFT:
+                if(pos.x < (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2((x+0.5)*tileSize.x, pos.y);
+                    return true;
+                }
+                break;
+            case CollisionType::TOP:
+                if(pos.y < (y+0.5)*tileSize.y)
+                {
+                    shouldbe = glm::vec2((x+1)*tileSize.x, pos.y);
+                    return true;
+                }
+                break;
+            case CollisionType::BOTTOM:
+                if((pos.y + size.y - 1.f) > (y+0.8)*tileSize.y)
+                {
+                    shouldbe = glm::vec2((x+1)*tileSize.x, pos.y);
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
+}
+
+bool Level::collisionMoveRight(Entity* entity, glm::vec2& shouldbe) const
+{
+    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
+
+    int x = (pos.x + size.x - 1.f) / tileSize.x;
+    int ymin = pos.y / tileSize.y, ymax = (pos.y + size.y - 1.f) / tileSize.y;
+
+    for(int y = ymin; y <= ymax; y++)
+    {
+        switch(collisionMap[map[y*mapSize.x+x]])
+        {
+            case CollisionType::FULL:
+            case CollisionType::LEFT:
+                shouldbe = glm::vec2(x*tileSize.x - size.x, pos.y);
+                return true;
+                break;
+            case CollisionType::RIGHT:
+                if((pos.x + size.x - 1.f) > (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2((x+0.5)*tileSize.x - size.x, pos.y);
+                    return true;
+                }
+                break;
+            case CollisionType::TOP:
+                if(pos.y < (y+0.5)*tileSize.y)
+                {
+                    shouldbe = glm::vec2(x*tileSize.x - size.x, pos.y);
+                    return true;
+                }
+                break;
+            case CollisionType::BOTTOM:
+                if((pos.y + size.y - 1.f) > (y+0.8)*tileSize.y)
+                {
+                    shouldbe = glm::vec2(x*tileSize.x - size.x, pos.y);
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
+}
+
+bool Level::collisionMoveUp(Entity* entity, glm::vec2& shouldbe) const
+{
+    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
+
+    int xmin = pos.x / tileSize.x, xmax = (pos.x + size.x - 1.f) / tileSize.x;
+    int y = pos.y / tileSize.y;
+
+    for(int x = xmin; x <= xmax; x++)
+    {
+        switch(collisionMap[map[y*mapSize.x+x]])
+        {
+            case CollisionType::FULL:
+            case CollisionType::BOTTOM:
+                shouldbe = glm::vec2(pos.x, (y+1)*tileSize.y);
+                return true;
+                break;
+            case CollisionType::TOP:
+                if(pos.y < (y+0.5)*tileSize.y)
+                {
+                    shouldbe = glm::vec2(pos.x, (y+0.5)*tileSize.y);
+                    return true;
+                }
+                break;
+            case CollisionType::LEFT:
+                if(pos.x < (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2(pos.x, (y+1)*tileSize.y);
+                    return true;
+                }
+                break;
+            case CollisionType::RIGHT:
+                if((pos.x + size.x - 1.f) > (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2(pos.x, (y+1)*tileSize.y);
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
+}
+
+bool Level::collisionMoveDown(Entity* entity, glm::vec2& shouldbe) const
+{
+    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
+
+    int xmin = pos.x / tileSize.x, xmax = (pos.x + size.x - 1.f) / tileSize.x;
+    int y = (pos.y + size.y - 1.f) / tileSize.y;
+
+    for(int x = xmin; x <= xmax; x++)
+    {
+        switch(collisionMap[map[y*mapSize.x+x]])
+        {
+            case CollisionType::FULL:
+            case CollisionType::TOP:
+                shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
+                return true;
+                break;
+            case CollisionType::BOTTOM:
+                if((pos.y + size.y - 1.f) > (y+0.8)*tileSize.y)
+                {
+                    shouldbe = glm::vec2(pos.x, (y+0.8)*tileSize.y - size.y);
+                    return true;
+                }
+                break;
+            case CollisionType::LEFT:
+                if(pos.x < (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
+                    return true;
+                }
+                break;
+            case CollisionType::RIGHT:
+                if((pos.x + size.x - 1.f) > (x+0.5)*tileSize.x)
+                {
+                    shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
+                    return true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
 }
 
 bool Level::load(const std::string& path) //Add loading errors returning 'false'
@@ -90,6 +274,22 @@ bool Level::load(const std::string& path) //Add loading errors returning 'false'
     int spawnRoom, spawnX, spawnY;
     file >> spawnRoom >> spawnX >> spawnY;
     spawnPos = glm::ivec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
+
+    getline(file, dummy); //Next line
+    for(int i = 0; i < 96; i++) collisionMap[i] = CollisionType::FULL;
+    getline(file, dummy); //Any
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::ANY;
+    getline(file, dummy); //Full
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::FULL;
+    getline(file, dummy); //Bottom
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::BOTTOM;
+    getline(file, dummy); //Top
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::TOP;
+    getline(file, dummy); //Right
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::RIGHT;
+    getline(file, dummy); //Left
+    for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::LEFT;
+
 
     map = new int[mapSize.x * mapSize.y];
     for(int i = 0; i < mapSize.x; i++) for(int j = 0; j < mapSize.y; j++) map[j*mapSize.x+i] = -1;

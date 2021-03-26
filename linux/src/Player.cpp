@@ -1,18 +1,13 @@
-#include <cmath>
-#include <iostream>
-#include <GL/glew.h>
-#include <GL/glut.h>
 #include "Player.h"
 #include "Game.h"
 #include "Level.h"
 
-#define JUMP_ANGLE_STEP 4
-#define JUMP_HEIGHT 96
-#define FALL_STEP 4
+#include <GL/glut.h>
+#include <iostream>
 
-Player::Player(const Program& program, Texture* spritesheetPtr) : Entity(program, spritesheetPtr, tileSize*2.f, glm::vec2(0.f, 0.f))
+Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*2.f, Texture::createTexture("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA), program)
 {
-	bJumping = false;
+	active = false;
 
 	for(int i = 0; i < 2; i++) sprite->addFrame(new Frame(i*0.25f, 0.f, 0.25f, 0.125f)); //0, 1
 	for(int i = 0; i < 3; i++) sprite->addFrame(new Frame(i*0.25f, 1.f*0.125f, 0.25f, 0.125f)); //2, 3, 4
@@ -27,27 +22,55 @@ Player::Player(const Program& program, Texture* spritesheetPtr) : Entity(program
 
 void Player::update(int deltaTime)
 {
+	if(!active) return;
+
+	glm::vec2 newPos;
 	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 	{
 		/*if(sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);*/
-		position.x -= 2;
-		/*if(map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32)))
+		Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
+		if(level->collisionMoveLeft(this, newPos))
 		{
-			posPlayer.x += 2;
-			sprite->changeAnimation(STAND_LEFT);
-		}*/
+			Entity::setPosition(newPos);
+			//sprite->changeAnimation(STAND_LEFT);
+		}
 	}
+
 	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 	{
 		/*if(sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);*/
-		position.x += 2;
-		/*if(map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))
+		Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
+		if(level->collisionMoveRight(this, newPos))
 		{
-			posPlayer.x -= 2;
-			sprite->changeAnimation(STAND_RIGHT);
-		}*/
+			Entity::setPosition(newPos);
+			//sprite->changeAnimation(STAND_RIGHT);
+		}
+	}
+
+	else if(Game::instance().getSpecialKey(GLUT_KEY_UP))
+	{
+		/*if(sprite->animation() != MOVE_RIGHT)
+			sprite->changeAnimation(MOVE_RIGHT);*/
+		Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
+		if(level->collisionMoveUp(this, newPos))
+		{
+			Entity::setPosition(newPos);
+			//sprite->changeAnimation(STAND_RIGHT);
+		}
+	}
+
+	else if(Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+	{
+		/*if(sprite->animation() != MOVE_RIGHT)
+			sprite->changeAnimation(MOVE_RIGHT);*/
+		Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
+		if(level->collisionMoveDown(this, newPos))
+		{
+			Entity::setPosition(newPos);
+			//sprite->changeAnimation(STAND_RIGHT);
+		}
 	}
 	/*else
 	{
@@ -86,6 +109,12 @@ void Player::update(int deltaTime)
 		}
 	}*/
 	Entity::update(deltaTime);
+}
+
+void Player::render(const Program &program)
+{
+	if(!active) return;
+	Entity::render(program);
 }
 
 

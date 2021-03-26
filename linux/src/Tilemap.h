@@ -12,7 +12,7 @@ class Tilemap
 
 	public:
 
-	Tilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, Tilesheet* tilesheet, const Program& program);
+	Tilemap(const glm::ivec2& mapSize, const int* map, const glm::vec2& tileSize, Tilesheet* tilesheet, const Program& program);
 	~Tilemap();
 
 	void render() const;
@@ -23,7 +23,7 @@ class Tilemap
 	GLuint VAO, vertices_VBO, texCoords_VBO;
 	int elements;
 
-	void buildTilemap(const glm::ivec2& mapSize, int* map, const glm::vec2& tileSize, const Program& program);
+	void buildTilemap(const glm::ivec2& mapSize, const int* map, const glm::vec2& tileSize, const Program& program);
 
 };
 

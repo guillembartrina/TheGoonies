@@ -14,6 +14,9 @@ static glm::ivec2 roomSize = glm::ivec2(32, 20);
 static glm::vec2 tileSize = glm::vec2(16.f, 16.f);
 static glm::vec2 floorOffset = glm::vec2(0.f, -2.f);
 
+enum CollisionType { FULL, TOP, BOTTOM, LEFT, RIGHT, ANY };
+
+
 class Level
 {
 
@@ -28,12 +31,11 @@ class Level
 	void update(int deltatime);
 
 	glm::ivec2 getMapSize() const;
-	/*
-	TODO:
-	bool collisionMoveLeft(Entity *a)
-	bool collisionMoveRight(Entity *a)
-	bool collisionMoveDown(Entity *a)
-	*/
+
+	bool collisionMoveLeft(Entity* entity, glm::vec2& shouldbe) const;
+	bool collisionMoveRight(Entity* entity, glm::vec2& shouldbe) const;
+	bool collisionMoveUp(Entity* entity, glm::vec2& shouldbe) const;
+	bool collisionMoveDown(Entity* entity, glm::vec2& shouldbe) const;
 
 	private:
 
@@ -43,6 +45,7 @@ class Level
 	std::string tsPath;
 	glm::ivec2 tsSize;
 	glm::ivec2 spawnPos;
+	CollisionType collisionMap[96];
 	
 	Player* player;
 	std::vector<Entity *> entities;

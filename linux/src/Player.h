@@ -9,14 +9,19 @@ enum State { WALK_LEFT, WALK_RIGHT, JUMP_LEFT, JUMP_RIGHT, PUNCH_LEFT, PUNCH_RIG
 class Player : public Entity
 {
 
-public:
-	Player(const Program &program, Texture* spritesheetPtr);
+	public:
+
+	Player(const Program &program);
 	void update(int deltaTime);
+	void render(const Program &program);
+
+	bool active;
 	
-private:
+	private:
+
 	State state;
 	int vit, exp;
-	//int jumpAngle, startY;
+
 };
 
 
