@@ -46,10 +46,16 @@ void Level::render(const glm::vec4& rect, const Program& program) const
     tileMap->render();
 
 	player->render(program);
+	for (int i = 0; i < entities.size(); ++i) {
+		entities[i]->render(program);
+	}
 }
 
 void Level::update(int deltatime) {
 	player->update(deltatime);
+	for (int i = 0; i < entities.size(); ++i) {
+		entities[i]->update(deltatime);
+	}
 }
 
 bool Level::load(const std::string& path) //Add loading errors returning 'false'

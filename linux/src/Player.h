@@ -1,30 +1,22 @@
+#pragma once
 #ifndef _PLAYER_INCLUDE
 #define _PLAYER_INCLUDE
 
+#include "Entity.h"
 
-#include "Sprite.h"
-#include "Level.h"
+enum State { WALK_LEFT, WALK_RIGHT, JUMP_LEFT, JUMP_RIGHT, PUNCH_LEFT, PUNCH_RIGHT, IDLE_LEFT, IDLE_RIGHT, CLIMB};
 
-class Level;
-
-class Player
+class Player : public Entity
 {
 
 public:
-	Player(const Program &program);
+	Player(const Program &program, Texture* spritesheetPtr);
 	void update(int deltaTime);
-	void render(const Program &program);
-	
-	void setLevel(Level *level);
-	void setPosition(const glm::vec2 &pos);
 	
 private:
-	bool bJumping;
-	glm::vec2 posPlayer;
-	int jumpAngle, startY;
-	Texture spritesheet;
-	Sprite *sprite;
-	Level *map;
+	State state;
+	int vit, exp;
+	//int jumpAngle, startY;
 };
 
 

@@ -4,30 +4,15 @@
 #include <GL/glut.h>
 #include "Player.h"
 #include "Game.h"
-
 #include "Level.h"
 
 #define JUMP_ANGLE_STEP 4
 #define JUMP_HEIGHT 96
 #define FALL_STEP 4
 
-
-enum PlayerAnims
-{
-	STAND_LEFT, STAND_RIGHT, MOVE_LEFT, MOVE_RIGHT
-};
-
-
-Player::Player(const Program& program)
+Player::Player(const Program& program, Texture* spritesheetPtr) : Entity(program, spritesheetPtr, tileSize*2.f, glm::vec2(0.f, 0.f))
 {
 	bJumping = false;
-	spritesheet.loadFromFile("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA);
-	spritesheet.setWrapS(GL_CLAMP_TO_EDGE);
-	spritesheet.setWrapT(GL_CLAMP_TO_EDGE);
-	spritesheet.setMinFilter(GL_NEAREST);
-	spritesheet.setMagFilter(GL_NEAREST);
-
-	sprite = new Sprite(glm::vec2(0.f, 0.f), tileSize*2.f, &spritesheet, program);
 
 	for(int i = 0; i < 2; i++) sprite->addFrame(new Frame(i*0.25f, 0.f, 0.25f, 0.125f)); //0, 1
 	for(int i = 0; i < 3; i++) sprite->addFrame(new Frame(i*0.25f, 1.f*0.125f, 0.25f, 0.125f)); //2, 3, 4
@@ -42,12 +27,11 @@ Player::Player(const Program& program)
 
 void Player::update(int deltaTime)
 {
-	sprite->update(deltaTime);
 	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 	{
 		/*if(sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);*/
-		posPlayer.x -= 2;
+		position.x -= 2;
 		/*if(map->collisionMoveLeft(posPlayer, glm::ivec2(32, 32)))
 		{
 			posPlayer.x += 2;
@@ -58,7 +42,7 @@ void Player::update(int deltaTime)
 	{
 		/*if(sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);*/
-		posPlayer.x += 2;
+		position.x += 2;
 		/*if(map->collisionMoveRight(posPlayer, glm::ivec2(32, 32)))
 		{
 			posPlayer.x -= 2;
@@ -101,24 +85,7 @@ void Player::update(int deltaTime)
 			}
 		}
 	}*/
-	
-	sprite->setPosition(posPlayer);
-}
-
-void Player::render(const Program &program)
-{
-	sprite->render(program);
-}
-
-void Player::setLevel(Level *level)
-{
-	level = level;
-}
-
-void Player::setPosition(const glm::vec2 &pos)
-{
-	posPlayer = pos;
-	sprite->setPosition(pos);
+	Entity::update(deltaTime);
 }
 
 
