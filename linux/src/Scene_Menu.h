@@ -31,6 +31,7 @@ class Scene_Menu : public IScene
 	Text text;
 
 	Program program;
+	Texture texture;
 	Sprite* sprite;
 
 };

@@ -40,7 +40,6 @@ Sprite::~Sprite()
 	{
 		delete f;
 	}
-	delete spritesheet;
 	glDeleteBuffers(1, &VBO);
 }
 

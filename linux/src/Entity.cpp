@@ -1,12 +1,12 @@
 #include "Entity.h"
 #include "Level.h"
 
-Entity::Entity(EntityType type, const glm::vec2 &pos, const glm::vec2 &size, Texture* spritesheet, const Program& program) : type(type)
+#include <iostream>
+
+Entity::Entity(EntityType type, const glm::vec2 &pos, const glm::vec2 &size, Texture* spritesheet, const Program& program) : type(type), position(pos), size(size)
 {
 	sprite = nullptr;
-	if(spritesheet) sprite = new Sprite(glm::vec2(0.f, 0.f), size, spritesheet, program);
-	position = pos;
-	this->size = size;
+	if(spritesheet) sprite = new Sprite(pos, size, spritesheet, program);
 }
 
 void Entity::setLevel(Level *level)

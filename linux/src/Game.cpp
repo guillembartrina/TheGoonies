@@ -13,7 +13,7 @@ Game::Game()
 void Game::init(int windowWidth, int windowHeight, IScene* scene)
 {
 	bPlay = true;
-	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	this->windowWidth = windowWidth;
 	this->windowHeight = windowHeight;
 	this->scene = scene;

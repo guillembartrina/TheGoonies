@@ -38,9 +38,8 @@ void Scene_Menu::init()
 	program.attachShader(frag);
 	program.link();
 
-	Texture* textu = new Texture();
-	textu->loadFromFile("images/rocks.jpg", PixelFormat::TEXTURE_PIXEL_FORMAT_RGB);
-	sprite = new Sprite(glm::vec2(400, 400), glm::vec2(100, 100), textu, program);
+	texture.loadFromFile("images/rocks.jpg", PixelFormat::TEXTURE_PIXEL_FORMAT_RGB);
+	sprite = new Sprite(glm::vec2(400, 400), glm::vec2(100, 100), &texture, program);
 
 	sprite->addFrame(new Frame(0.f, 0.f, 0.25f, 0.25f));
 	sprite->addFrame(new Frame(0.25f, 0.f, 0.25f, 0.25f));

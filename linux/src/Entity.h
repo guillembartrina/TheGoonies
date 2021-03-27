@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-enum EntityType {PLAYER, VINE, MONSTER, OBSTACLE, DOOR, ITEM};
+enum EntityType {PLAYER, VINE, MONSTER, OBSTACLE, DOOR, ITEM, SENSOR};
 
 class Level;
 
@@ -30,7 +30,7 @@ class Entity
 
 	const EntityType type;
 	glm::vec2 size;
-	glm::vec2 position, velocity, acceleration;
+	glm::vec2 position;
 	Sprite* sprite;
 
 	Level *level;

@@ -22,7 +22,14 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sprite->addAnimation(new Animation({ 6, 2 }, { 200.f, 50.f })); //2: Punch right
 	sprite->addAnimation(new Animation({ 7, 8, 7, 9 }, { 250.f, 250.f, 250.f, 250.f })); //3: Walk left
 	sprite->addAnimation(new Animation({ 11, 7 }, { 200.f, 50.f }));//4: Punch left
-	sprite->setAnimation(4);
+
+	sprite->setFrame(2);
+}
+
+void Player::setLevel(Level *level)
+{
+	Entity::setLevel(level);
+	active = true;
 }
 
 void Player::update(int deltaTime)

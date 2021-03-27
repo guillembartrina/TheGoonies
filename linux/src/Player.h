@@ -12,6 +12,7 @@ class Player : public Entity
 	public:
 
 	Player(const Program &program);
+	void setLevel(Level *level);
 	void update(int deltaTime);
 	void render(const Program &program);
 

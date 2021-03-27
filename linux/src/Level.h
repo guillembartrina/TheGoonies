@@ -44,16 +44,17 @@ class Level
 	int* map;
 	std::string tsPath;
 	glm::ivec2 tsSize;
-	glm::ivec2 spawnPos;
+	glm::vec2 spawnPos;
 	CollisionType collisionMap[96];
 	
 	Player* player;
 	std::vector<Entity *> entities;
 	Tilemap* tileMap;
+	Tilesheet* moving;
 
 	glm::ivec2 cam;
 
-	bool load(const std::string& path);
+	bool load(const std::string& path, const Program& program);
 
 };
 

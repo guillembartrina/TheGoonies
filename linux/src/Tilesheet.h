@@ -15,7 +15,9 @@ class Tilesheet
 	Tilesheet(const std::string& path, const glm::ivec2& size);
 	~Tilesheet();
 
+	Texture* getTexture();
     glm::vec4 getTexCoords(int index);
+	glm::vec4 getTexCoords(glm::ivec2 pos, glm::ivec2 size = glm::ivec2(1, 1));
 
 	void use() const;
 

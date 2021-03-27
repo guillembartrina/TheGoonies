@@ -17,6 +17,11 @@ Tilesheet::Tilesheet(const std::string& path, const glm::ivec2& size)
 
 Tilesheet::~Tilesheet() {}
 
+Texture* Tilesheet::getTexture()
+{
+    return &texture;
+}
+
 glm::vec4 Tilesheet::getTexCoords(int index)
 {
     int row = index / size.x, column = index % size.x;
@@ -26,6 +31,14 @@ glm::vec4 Tilesheet::getTexCoords(int index)
                      tileSize.y * row,
                      tileSize.x * (column + 1) - halfTexel.x,
                      tileSize.y * (row + 1) - halfTexel.y);
+}
+
+glm::vec4 Tilesheet::getTexCoords(glm::ivec2 pos, glm::ivec2 size)
+{
+    return glm::vec4(tileSize.x * pos.x,
+                     tileSize.y * pos.y,
+                     tileSize.x * (pos.x + size.x) - halfTexel.x,
+                     tileSize.y * (pos.y + size.y) - halfTexel.y);
 }
 
 void Tilesheet::use() const
