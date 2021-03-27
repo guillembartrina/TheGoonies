@@ -17,7 +17,12 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sprite->addFrame(new Frame(0.f, 5.f*0.125f, 0.25f, 0.125f)); //10
 	sprite->addFrame(new Frame(0.f, 6.f*0.125f, 0.25f, 0.125f)); //11
 
-	sprite->setFrame(3);
+	sprite->addAnimation(new Animation({0,1}, {500.f, 500.f}));//0: Climbing
+	sprite->addAnimation(new Animation({ 2,3,2,4 }, { 250.f, 250.f, 250.f, 250.f })); //1: Walk right
+	sprite->addAnimation(new Animation({ 6, 2 }, { 200.f, 50.f })); //2: Punch right
+	sprite->addAnimation(new Animation({ 7, 8, 7, 9 }, { 250.f, 250.f, 250.f, 250.f })); //3: Walk left
+	sprite->addAnimation(new Animation({ 11, 7 }, { 200.f, 50.f }));//4: Punch left
+	sprite->setAnimation(4);
 }
 
 void Player::update(int deltaTime)
