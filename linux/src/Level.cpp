@@ -44,10 +44,10 @@ void Level::render(const glm::vec4& rect, const Program& program) const
     glm::vec2 scale = glm::vec2(rect.y - rect.x, rect.z - rect.w) / (glm::vec2(roomSize) * tileSize); // World coordinates -> window coordinates
     camview = glm::scale(camview, glm::vec3(scale, 1.f));
 
-    program.setUniformValue(program.getUniformLocation("camview"), camview);
-
     glm::vec2 translate1 = -1.f * glm::vec2(cam) * glm::vec2(roomSize) * tileSize; // Room selection
-    modelview = glm::translate(modelview, glm::vec3(translate1, 0.f));
+    camview = glm::translate(camview, glm::vec3(translate1, 0.f));
+
+    program.setUniformValue(program.getUniformLocation("camview"), camview);
 
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
@@ -59,7 +59,19 @@ void Level::render(const glm::vec4& rect, const Program& program) const
 	if(player) player->render(program);
 }
 
-void Level::update(int deltatime) {
+void Level::update(int deltatime)
+{
+    if(player)
+    {
+        int playerX = (player->getPosition().x + 0.5f*player->getSize().x) / (tileSize.x * roomSize.x),
+            playerY = (player->getPosition().y + 0.5f*player->getSize().y) / (tileSize.y * roomSize.y);
+
+        if(playerX < cam.x*roomSize.x) cam += glm::ivec2(-1, 0);
+        if(playerY < cam.y*roomSize.y) cam += glm::ivec2(0, -1);
+        if(playerX > cam.x*roomSize.x) cam += glm::ivec2(1, 0);
+        if(playerY > cam.y*roomSize.y) cam += glm::ivec2(0, -1);
+    }
+
 	for (unsigned int i = 0; i < entities.size(); ++i)
     {
 		entities[i]->update(deltatime);

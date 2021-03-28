@@ -5,9 +5,9 @@
 #include "Tilesheet.h"
 
 static float dropletVel = 2.f;
-static float dropletWaiting = 600;
-static float dropletLoading = 800;
-static float dropletCrashing = 300;
+static int dropletWaiting = 600;
+static int dropletLoading = 800;
+static int dropletCrashing = 300;
 
 enum DropletState {DROPLET_WAITING, DROPLET_LOADING, DROPLET_FALLING, DROPLET_CRASHING};
 
