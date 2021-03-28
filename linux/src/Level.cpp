@@ -10,7 +10,7 @@
 
 Level::Level(const std::string& path, const Program& program)
 {
-    cam = glm::ivec2(0, 0);
+    cam = glm::ivec2(2, 0);
     if(!load(path, program)) std::cerr << "Error reading level file!" << std::endl;
 }
 
@@ -65,11 +65,7 @@ void Level::update(int deltatime)
     {
         int playerX = (player->getPosition().x + 0.5f*player->getSize().x) / (tileSize.x * roomSize.x),
             playerY = (player->getPosition().y + 0.5f*player->getSize().y) / (tileSize.y * roomSize.y);
-
-        if(playerX < cam.x*roomSize.x) cam += glm::ivec2(-1, 0);
-        if(playerY < cam.y*roomSize.y) cam += glm::ivec2(0, -1);
-        if(playerX > cam.x*roomSize.x) cam += glm::ivec2(1, 0);
-        if(playerY > cam.y*roomSize.y) cam += glm::ivec2(0, -1);
+        if(cam != glm::ivec2(playerX, playerY)) cam = glm::ivec2(playerX, playerY);
     }
 
 	for (unsigned int i = 0; i < entities.size(); ++i)
