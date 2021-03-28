@@ -35,8 +35,9 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 
 	sprite->setFrame(2);
 	Entity::setSprite(sprite, glm::vec2(-0.25f*tileSize.x, 0.f));
-
+	
 	state = IDLE_RIGHT;
+	fly = false;
 }
 
 Player::~Player()
@@ -53,9 +54,53 @@ void Player::spawn(Level *level)
 void Player::update(int deltaTime)
 {
 	if(!active) return;
-
 	glm::vec2 newPos;
+	if (fly) {
+		if (Game::instance().getKey('g')) {
+			fly = false;
+		}
+		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+		{
+			Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
+			if (level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
+			{
+				Entity::setPosition(newPos);
+			}
+		}
+
+		else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
+		{
+			Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
+			if (level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
+			{
+				Entity::setPosition(newPos);
+			}
+		}
+
+		else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
+		{
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
+			if (level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos))
+			{
+				Entity::setPosition(newPos);
+			}
+		}
+
+		else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
+		{
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
+			if (level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
+			{
+				Entity::setPosition(newPos);
+			}
+		}
+		return;
+	}
+
 	State newState = state;
+	if (Game::instance().getKey('f')) {
+		fly = true;
+	}
 	if (Game::instance().getKey('z')) {
 		if(state != JUMP_LEFT && state != JUMP_RIGHT) velocity = glm::vec2(0.f, velocity.y);
 		if (state == WALK_LEFT || state == IDLE_LEFT) {
@@ -143,75 +188,7 @@ void Player::update(int deltaTime)
 		state = newState;
 		sprite->setAnimation(state);
 	}
-
-	/*if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
-	{
-		Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
-		if(level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
-		{
-			Entity::setPosition(newPos);
-			//sprite->changeAnimation(STAND_LEFT);
-		}
-	}
-
-	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
-	{
-		Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
-		if(level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
-		{
-			Entity::setPosition(newPos);
-			//sprite->changeAnimation(STAND_RIGHT);
-		}
-	}
-
-	else if(Game::instance().getSpecialKey(GLUT_KEY_UP))
-	{
-		Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
-		if(level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos))
-		{
-			Entity::setPosition(newPos);
-			//sprite->changeAnimation(STAND_RIGHT);
-		}
-	}
-
-	else if(Game::instance().getSpecialKey(GLUT_KEY_DOWN))
-	{
-		Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
-		if(level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
-		{
-			Entity::setPosition(newPos);
-			//sprite->changeAnimation(STAND_RIGHT);
-		}
-	}*/
 	
-	/*if(bJumping)
-	{
-		jumpAngle += JUMP_ANGLE_STEP;
-		if(jumpAngle == 180)
-		{
-			bJumping = false;
-			posPlayer.y = startY;
-		}
-		else
-		{
-			posPlayer.y = int(startY - 96 * sin(3.14159f * jumpAngle / 180.f));
-			if(jumpAngle > 90)
-				bJumping = !map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y);
-		}
-	}
-	else
-	{
-		posPlayer.y += FALL_STEP;
-		if(map->collisionMoveDown(posPlayer, glm::ivec2(32, 32), &posPlayer.y))
-		{
-			if(Game::instance().getSpecialKey(GLUT_KEY_UP))
-			{
-				bJumping = true;
-				jumpAngle = 0;
-				startY = posPlayer.y;
-			}
-		}
-	}*/
 	Entity::update(deltaTime);
 }
 

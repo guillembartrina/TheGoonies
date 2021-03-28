@@ -25,6 +25,7 @@ class Player : public Entity
 	int vit, exp;
 	glm::vec2 velocity;
 	glm::vec2 acceleration;
+	bool fly;
 
 	Texture* texture;
 

@@ -5,6 +5,7 @@
 #include "Game.h"
 
 #include <iostream>
+#include <algorithm>
 
 Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
     : Entity(EntityType::OBSTACLE, position, glm::vec2(tileSize.x*2.f, tileSize.y))
