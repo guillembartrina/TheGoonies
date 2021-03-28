@@ -9,7 +9,7 @@
 Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
     : Entity(EntityType::OBSTACLE, position, glm::vec2(tileSize.x*2.f, tileSize.y))
 {
-    state = READY;
+    state = ROCK_READY;
 
     Sprite* sprite = new Sprite(position, glm::vec2(tileSize.x*2.f, tileSize.y), spritesheet->getTexture(), program);
 
@@ -25,9 +25,10 @@ Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& pro
 void Rock::spawn(Level* level)
 {
     Entity::spawn(level);
-    glm::ivec2 fin;
-    level->getFirstOf_Tiles(glm::ivec2(Entity::getPosition().x / tileSize.x, Entity::getPosition().y / tileSize.y), 2, CollisionType::BOTTOM, fin);
-    end = (fin.y+1)*tileSize.y;
+    glm::ivec2 fin1, fin2;
+    level->getFirstOf_Tiles(glm::ivec2(Entity::getPosition().x / tileSize.x, Entity::getPosition().y / tileSize.y), 2, CollisionType::BOTTOM, fin1);
+    level->getFirstOf_Tiles(glm::ivec2((Entity::getPosition().x / tileSize.x)+1, Entity::getPosition().y / tileSize.y), 2, CollisionType::BOTTOM, fin2);
+    end = (std::min(fin1.y, fin2.y)+1)*tileSize.y;
     sensor = new Sensor(SensorType::ROCK, Entity::getPosition() + glm::vec2(-0.5*tileSize.x, 0.f), glm::vec2(2.f*tileSize.x, (end-Entity::getPosition().y)));
 }
 
@@ -35,22 +36,23 @@ void Rock::update(int deltaTime)
 {
     switch (state)
     {
-        case READY:
+        case ROCK_READY:
         {
             Player* player;        
             if(sensor && (player = level->getPlayer()))
             {
-                if(Entity::areColliding(sensor, player)) state = FALLING;
+                if(Entity::areColliding(sensor, player)) state = ROCK_FALLING;
             }
         }
             break;
-        case FALLING:
+        case ROCK_FALLING:
         {
             if(getPosition().y + getSize().y + rockVel >= end)
             {
                 setPosition(glm::vec2(getPosition().x, end - getSize().y));
                 sprite->setFrame(1);
-                state = CRASHING;
+                state = ROCK_CRASHING;
+                timer = rockCrashing;
             }
             else
             {
@@ -58,7 +60,9 @@ void Rock::update(int deltaTime)
             }
         }
             break;
-        case CRASHING:
+        case ROCK_CRASHING:
+            timer -= deltaTime;
+            if(timer < 0) state = ROCK_DEAD;
             break;
         default:
             break;
@@ -68,5 +72,5 @@ void Rock::update(int deltaTime)
 
 void Rock::render(const Program &program)
 {
-    Entity::render(program);
+    if(state != ROCK_DEAD) Entity::render(program);
 }

@@ -2,6 +2,7 @@
 
 #include "Game.h"
 #include "Rock.h"
+#include "Droplet.h"
 
 #include <iostream>
 #include <fstream>
@@ -398,15 +399,25 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
         file >> elementType;
         switch (elementType)
         {
-        case 1:
-            int elementRoom, elementX, elementY;
-            file >> elementRoom >> elementX >> elementY;
-            entities.push_back(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
-            entities.back()->spawn(this);
-            break;
-        
-        default:
-            break;
+            case 1:
+            {
+                int elementRoom, elementX, elementY;
+                file >> elementRoom >> elementX >> elementY;
+                entities.push_back(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+                entities.back()->spawn(this);
+            }
+                break;
+            case 2:
+            {
+                int elementRoom, elementX, elementY;
+                file >> elementRoom >> elementX >> elementY;
+                entities.push_back(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+                entities.back()->spawn(this);
+            }
+                break;
+            
+            default:
+                break;
         }
     }
 

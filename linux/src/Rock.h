@@ -6,8 +6,9 @@
 #include "Tilesheet.h"
 
 static float rockVel = 2.f;
+static int rockCrashing = 250;
 
-enum RockState { READY, FALLING, CRASHING, DEAD };
+enum RockState { ROCK_READY, ROCK_FALLING, ROCK_CRASHING, ROCK_DEAD };
 
 class Rock : public Entity
 {
@@ -25,6 +26,7 @@ class Rock : public Entity
 	float end;
 	RockState state;
 	Sensor* sensor;
+	int timer;
 };
 
 #endif // _ROCK_INCLUDE

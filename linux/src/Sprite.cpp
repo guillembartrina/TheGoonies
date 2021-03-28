@@ -100,7 +100,7 @@ void Sprite::setAnimation(int id)
 	{
 		currentAnimation = id;
 		currentKeyFrame = 0;
-		currentFrame = animations[id]->keyframes[0]->id;
+		if(id >= 0) currentFrame = animations[id]->keyframes[0]->id;
 		currentTime = 0.f;
 	}
 }
