@@ -9,7 +9,7 @@
 
 #define TIME_PER_FRAME 1000.f / 60.f
 #define WINDOW_WIDTH 1600
-#define WINDOW_HEIGHT 900
+#define WINDOW_HEIGHT 1200
 
 static void keyboardDownCallback(unsigned char key, int x, int y)
 {
