@@ -12,9 +12,10 @@ class Player : public Entity
 	public:
 
 	Player(const Program &program);
-	void setLevel(Level *level);
-	void update(int deltaTime);
-	void render(const Program &program);
+	~Player();
+	void spawn(Level *level) override;
+	void update(int deltaTime) override;
+	void render(const Program &program) override;
 
 	bool active;
 	
@@ -22,6 +23,8 @@ class Player : public Entity
 
 	State state;
 	int vit, exp;
+
+	Texture* texture;
 
 };
 

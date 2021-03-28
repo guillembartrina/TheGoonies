@@ -5,9 +5,12 @@
 #include <GL/glut.h>
 #include <iostream>
 
-Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*2.f, Texture::createTexture("images/player.png", TEXTURE_PIXEL_FORMAT_RGBA), program)
+Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*glm::vec2(1.5f, 2.f))
 {
 	active = false;
+
+	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
+	Sprite* sprite = new Sprite(glm::vec2(0.f), tileSize*2.f, texture, program);
 
 	for(int i = 0; i < 2; i++) sprite->addFrame(new Frame(i*0.25f, 0.f, 0.25f, 0.125f)); //0, 1
 	for(int i = 0; i < 3; i++) sprite->addFrame(new Frame(i*0.25f, 1.f*0.125f, 0.25f, 0.125f)); //2, 3, 4
@@ -24,11 +27,18 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sprite->addAnimation(new Animation({ 11, 7 }, { 200.f, 50.f }));//4: Punch left
 
 	sprite->setFrame(2);
+
+	Entity::setSprite(sprite, glm::vec2(-0.25f*tileSize.x, 0.f));
 }
 
-void Player::setLevel(Level *level)
+Player::~Player()
 {
-	Entity::setLevel(level);
+	delete texture;
+}
+
+void Player::spawn(Level *level)
+{
+	Entity::spawn(level);
 	active = true;
 }
 
@@ -42,7 +52,7 @@ void Player::update(int deltaTime)
 		/*if(sprite->animation() != MOVE_LEFT)
 			sprite->changeAnimation(MOVE_LEFT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
-		if(level->collisionMoveLeft(this, newPos))
+		if(level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
 		{
 			Entity::setPosition(newPos);
 			//sprite->changeAnimation(STAND_LEFT);
@@ -54,7 +64,7 @@ void Player::update(int deltaTime)
 		/*if(sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
-		if(level->collisionMoveRight(this, newPos))
+		if(level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
 		{
 			Entity::setPosition(newPos);
 			//sprite->changeAnimation(STAND_RIGHT);
@@ -66,7 +76,7 @@ void Player::update(int deltaTime)
 		/*if(sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
-		if(level->collisionMoveUp(this, newPos))
+		if(level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos))
 		{
 			Entity::setPosition(newPos);
 			//sprite->changeAnimation(STAND_RIGHT);
@@ -78,7 +88,7 @@ void Player::update(int deltaTime)
 		/*if(sprite->animation() != MOVE_RIGHT)
 			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
-		if(level->collisionMoveDown(this, newPos))
+		if(level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
 		{
 			Entity::setPosition(newPos);
 			//sprite->changeAnimation(STAND_RIGHT);

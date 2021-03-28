@@ -2,20 +2,29 @@
 #define _ROCK_INCLUDE
 
 #include "Entity.h"
+#include "Sensor.h"
 #include "Tilesheet.h"
+
+static float rockVel = 2.f;
+
+enum RockState { READY, FALLING, CRASHING, DEAD };
 
 class Rock : public Entity
 {
 
 	public:
 
-	Rock(const glm::vec2 &pos, Tilesheet* spritesheet, const Program& program);
+	Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program);
 
-    void update(int deltaTime);
-	void render(const Program &program);
+	void spawn(Level* level) override;
+    void update(int deltaTime) override;
+	void render(const Program &program) override;
 
-	protected:
+	private:
 
+	float end;
+	RockState state;
+	Sensor* sensor;
 };
 
 #endif // _ROCK_INCLUDE

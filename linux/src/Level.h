@@ -31,30 +31,33 @@ class Level
 	void update(int deltatime);
 
 	glm::ivec2 getMapSize() const;
+	Player* getPlayer();
 
-	bool collisionMoveLeft(Entity* entity, glm::vec2& shouldbe) const;
-	bool collisionMoveRight(Entity* entity, glm::vec2& shouldbe) const;
-	bool collisionMoveUp(Entity* entity, glm::vec2& shouldbe) const;
-	bool collisionMoveDown(Entity* entity, glm::vec2& shouldbe) const;
+	bool collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveUp(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+
+	bool getFirstOf(const glm::vec2& pos, const glm::vec2& size, int direction, glm::vec2& first) const;
+	bool getFirstOf_Tiles(const glm::ivec2& ini, int direction, CollisionType type, glm::ivec2& first) const;
 
 	private:
 
 	std::string name;
 	glm::ivec2 mapSize;
 	int* map;
-	std::string tsPath;
-	glm::ivec2 tsSize;
+	Tilesheet* tilesheet, *movingsheet;
 	glm::vec2 spawnPos;
 	CollisionType collisionMap[96];
 	
 	Player* player;
 	std::vector<Entity *> entities;
 	Tilemap* tileMap;
-	Tilesheet* moving;
 
 	glm::ivec2 cam;
 
 	bool load(const std::string& path, const Program& program);
+	glm::vec2 roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const;
 
 };
 

@@ -14,7 +14,6 @@ Tilemap::~Tilemap()
     glDeleteBuffers(1, &vertices_VBO);
     glDeleteBuffers(1, &texCoords_VBO);
     glDeleteVertexArrays(1, &VAO);
-    delete tilesheet;
 }
 
 void Tilemap::render() const

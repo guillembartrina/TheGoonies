@@ -3,14 +3,14 @@
 
 #include "Entity.h"
 
-enum SensorType {VINE_TOP, VINE_BOTTOM};
+enum SensorType {VINE_TOP, VINE_BOTTOM, ROCK};
 
 class Sensor : public Entity
 {
 
 	public:
 
-	Sensor(const glm::vec2 &pos, const glm::vec2 &size, const Program& program);
+	Sensor(SensorType type, const glm::vec2 &pos, const glm::vec2 &size);
 
     SensorType getType() const;
 

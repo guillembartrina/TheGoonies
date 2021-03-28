@@ -11,7 +11,6 @@ Level::Level(const std::string& path, const Program& program)
 {
     cam = glm::ivec2(0, 0);
     if(!load(path, program)) std::cerr << "Error reading level file!" << std::endl;
-    tileMap = new Tilemap(mapSize, map, tileSize, new Tilesheet(tsPath, tsSize), program);
 }
 
 Level::~Level()
@@ -21,14 +20,16 @@ Level::~Level()
         delete entities[i];
     }
     delete tileMap;
+    delete tilesheet;
+    delete movingsheet;
     delete[] map;
 }
 
 void Level::spawn(Player* player)
 {
     this->player = player;
-    player->setPosition(glm::vec2(spawnPos) - tileSize*glm::vec2(0.5f, 0.2f)); //Change??
-    player->setLevel(this);
+    player->setPosition(glm::vec2(spawnPos) - tileSize*glm::vec2(0.25f, 0.2f)); //Change??
+    player->spawn(this);
 }
 
 void Level::render(const glm::vec4& rect, const Program& program) const
@@ -50,19 +51,19 @@ void Level::render(const glm::vec4& rect, const Program& program) const
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
 
-	if(player) player->render(program);
 	for (unsigned int i = 0; i < entities.size(); ++i)
     {
 		entities[i]->render(program);
 	}
+	if(player) player->render(program);
 }
 
 void Level::update(int deltatime) {
-	if(player) player->update(deltatime);
 	for (unsigned int i = 0; i < entities.size(); ++i)
     {
 		entities[i]->update(deltatime);
 	}
+	if(player) player->update(deltatime);
 }
 
 glm::ivec2 Level::getMapSize() const
@@ -70,10 +71,13 @@ glm::ivec2 Level::getMapSize() const
     return mapSize;
 }
 
-bool Level::collisionMoveLeft(Entity* entity, glm::vec2& shouldbe) const
+Player* Level::getPlayer()
 {
-    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
+    return player;
+}
 
+bool Level::collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
+{
     int x = pos.x / tileSize.x;
     int ymin = pos.y / tileSize.y, ymax = (pos.y + size.y - 1.f) / tileSize.y;
 
@@ -114,10 +118,8 @@ bool Level::collisionMoveLeft(Entity* entity, glm::vec2& shouldbe) const
     return false;
 }
 
-bool Level::collisionMoveRight(Entity* entity, glm::vec2& shouldbe) const
+bool Level::collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
 {
-    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
-
     int x = (pos.x + size.x - 1.f) / tileSize.x;
     int ymin = pos.y / tileSize.y, ymax = (pos.y + size.y - 1.f) / tileSize.y;
 
@@ -158,10 +160,8 @@ bool Level::collisionMoveRight(Entity* entity, glm::vec2& shouldbe) const
     return false;
 }
 
-bool Level::collisionMoveUp(Entity* entity, glm::vec2& shouldbe) const
+bool Level::collisionMoveUp(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
 {
-    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
-
     int xmin = pos.x / tileSize.x, xmax = (pos.x + size.x - 1.f) / tileSize.x;
     int y = pos.y / tileSize.y;
 
@@ -202,10 +202,8 @@ bool Level::collisionMoveUp(Entity* entity, glm::vec2& shouldbe) const
     return false;
 }
 
-bool Level::collisionMoveDown(Entity* entity, glm::vec2& shouldbe) const
+bool Level::collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
 {
-    glm::vec2 pos = entity->getPosition(), size = entity->getSize();
-
     int xmin = pos.x / tileSize.x, xmax = (pos.x + size.x - 1.f) / tileSize.x;
     int y = (pos.y + size.y - 1.f) / tileSize.y;
 
@@ -246,9 +244,69 @@ bool Level::collisionMoveDown(Entity* entity, glm::vec2& shouldbe) const
     return false;
 }
 
-glm::vec2 relativeToWorld(glm::ivec2* roomPositions, int room, int x, int y)
+bool Level::getFirstOf(const glm::vec2& pos, const glm::vec2& size, int direction, glm::vec2& first) const //REFACTOR!
 {
-    return glm::vec2((roomPositions[room].x*roomSize.x+x)*tileSize.x, (roomPositions[room].y*roomSize.y+y)*tileSize.y);
+    glm::vec2 curr = pos;
+    while(true)
+    {
+        switch (direction)
+        {
+            case 0:
+                if(curr.y < 0.f) return false;
+                if(collisionMoveUp(curr, size, first)) return true;
+                curr.y -= tileSize.y*0.5f;
+                break;
+            case 1:
+                if(curr.x + size.x >= mapSize.x*tileSize.x) return false;
+                if(collisionMoveRight(curr, size, first)) return true;
+                curr.y += tileSize.x*0.5f;
+                break;
+            case 2:
+                if(curr.y + size.y >= mapSize.y*tileSize.y) return false;
+                if(collisionMoveDown(curr, size, first)) return true;
+                curr.y += tileSize.y*0.5f;
+                break;
+            case 3:
+                if(curr.x < 0.f) return false;
+                if(collisionMoveLeft(curr, size, first)) return true;
+                curr.y -= tileSize.x*0.5f;
+                break;
+        
+            default:
+                break;
+        }
+    }
+}
+
+bool Level::getFirstOf_Tiles(const glm::ivec2& ini, int direction, CollisionType type, glm::ivec2& first) const
+{
+    glm::ivec2 curr = ini;
+    while(curr.x >= 0 && curr.y >= 0 && curr.x < mapSize.x && curr.y < mapSize.y)
+    {
+        if(collisionMap[map[curr.y*mapSize.x+curr.x]] == type)
+        {
+            first = curr;
+            return true;
+        }
+        switch (direction)
+        {
+            case 0:
+                curr.y--;
+                break;
+            case 1:
+                curr.x++;
+                break;
+            case 2:
+                curr.y++;
+                break;
+            case 3:
+                curr.x--;
+                break;
+            default:
+                break;
+        }
+    }
+    return false;
 }
 
 bool Level::load(const std::string& path, const Program& program) //Add loading errors returning 'false'
@@ -259,8 +317,11 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
     std::string dummy;
 
     getline(file, name);
-    getline(file, tsPath);
-    file >> tsSize.x >> tsSize.y;
+    std::string tilesPath;
+    getline(file, tilesPath);
+    glm::ivec2 tilesSize;
+    file >> tilesSize.x >> tilesSize.y;
+    tilesheet = new Tilesheet(tilesPath, tilesSize);
     
     int rooms, roomsX, roomsY;
     file >> rooms;
@@ -282,8 +343,7 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
 
     int spawnRoom, spawnX, spawnY;
     file >> spawnRoom >> spawnX >> spawnY;
-    spawnPos = relativeToWorld(roomPositions, spawnRoom, spawnX, spawnY); //glm::vec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
-
+    spawnPos = roomRelativeToWorldCoords(roomPositions, spawnRoom, glm::ivec2(spawnX, spawnY)); //glm::vec2((roomPositions[spawnRoom].x*roomSize.x+spawnX)*tileSize.x, (roomPositions[spawnRoom].y*roomSize.y+spawnY)*tileSize.y);
 
     getline(file, dummy); //Next line
     for(int i = 0; i < 96; i++) collisionMap[i] = CollisionType::FULL;
@@ -299,7 +359,6 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
     for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::RIGHT;
     getline(file, dummy); //Left
     for(unsigned int i = 0; i < dummy.length(); i++) collisionMap[dummy[i]-' '] = CollisionType::LEFT;
-
 
     map = new int[mapSize.x * mapSize.y];
     for(int i = 0; i < mapSize.x; i++) for(int j = 0; j < mapSize.y; j++) map[j*mapSize.x+i] = -1;
@@ -323,12 +382,14 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
         }
     }
 
+    tileMap = new Tilemap(mapSize, map, tileSize, tilesheet, program);
+
     //---
     std::string movingPath;
     getline(file, movingPath);
     glm::ivec2 movingSize;
     file >> movingSize.x >> movingSize.y;
-    moving = new Tilesheet(movingPath, movingSize);
+    movingsheet = new Tilesheet(movingPath, movingSize);
 
     int elements, elementType;
     file >> elements;
@@ -340,7 +401,8 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
         case 1:
             int elementRoom, elementX, elementY;
             file >> elementRoom >> elementX >> elementY;
-            entities.push_back(new Rock(relativeToWorld(roomPositions, elementRoom, elementX, elementY), moving, program));
+            entities.push_back(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            entities.back()->spawn(this);
             break;
         
         default:
@@ -352,4 +414,9 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
 
     file.close();
     return true;
+}
+
+glm::vec2 Level::roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const
+{
+    return glm::vec2((roomPositions[room].x*roomSize.x+coords.x)*tileSize.x, (roomPositions[room].y*roomSize.y+coords.y)*tileSize.y);
 }
