@@ -23,6 +23,8 @@ class Player : public Entity
 
 	State state;
 	int vit, exp;
+	glm::vec2 velocity;
+	glm::vec2 acceleration;
 
 	Texture* texture;
 

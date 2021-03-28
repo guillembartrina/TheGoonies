@@ -40,7 +40,6 @@ void Entity::spawn(Level *level)
 void Entity::update(int deltaTime)
 {
 	if(sprite) sprite->update(deltaTime);
-	//TODO: Recalcular velocitat a partir de l'acceleraci�
 }
 
 void Entity::render(const Program &program)

@@ -9,6 +9,9 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 {
 	active = false;
 
+	this->velocity = glm::vec2(0.f, 0.f);
+	this->acceleration = glm::vec2(0.f, 2.f);
+
 	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
 	Sprite* sprite = new Sprite(glm::vec2(0.f), tileSize*2.f, texture, program);
 
@@ -21,14 +24,19 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sprite->addFrame(new Frame(0.f, 6.f*0.125f, 0.25f, 0.125f)); //11
 
 	sprite->addAnimation(new Animation({0,1}, {500.f, 500.f}));//0: Climbing
-	sprite->addAnimation(new Animation({ 2,3,2,4 }, { 250.f, 250.f, 250.f, 250.f })); //1: Walk right
-	sprite->addAnimation(new Animation({ 6, 2 }, { 200.f, 50.f })); //2: Punch right
-	sprite->addAnimation(new Animation({ 7, 8, 7, 9 }, { 250.f, 250.f, 250.f, 250.f })); //3: Walk left
-	sprite->addAnimation(new Animation({ 11, 7 }, { 200.f, 50.f }));//4: Punch left
+	sprite->addAnimation(new Animation({ 2 }, { 500.f })); // 1: Idle right
+	sprite->addAnimation(new Animation({3,2,4,2 }, { 250.f, 250.f, 250.f, 250.f })); //2: Walk right
+	sprite->addAnimation(new Animation({ 5 }, { 500.f })); // 3: Jump right
+	sprite->addAnimation(new Animation({ 6, 2 }, { 200.f, 50.f })); //4: Punch right
+	sprite->addAnimation(new Animation({ 7 }, { 500.f })); //5: Idle left
+	sprite->addAnimation(new Animation({8, 7, 9,7 }, { 250.f, 250.f, 250.f, 250.f })); //6: Walk left
+	sprite->addAnimation(new Animation({ 10 }, { 500.f })); //7: Jump left
+	sprite->addAnimation(new Animation({ 11, 7 }, { 200.f, 50.f }));//8: Punch left
 
 	sprite->setFrame(2);
-
 	Entity::setSprite(sprite, glm::vec2(-0.25f*tileSize.x, 0.f));
+
+	state = IDLE_RIGHT;
 }
 
 Player::~Player()
@@ -47,10 +55,97 @@ void Player::update(int deltaTime)
 	if(!active) return;
 
 	glm::vec2 newPos;
-	if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
+	State newState = state;
+	if (Game::instance().getKey('z')) {
+		if(state != JUMP_LEFT && state != JUMP_RIGHT) velocity = glm::vec2(0.f, velocity.y);
+		if (state == WALK_LEFT || state == IDLE_LEFT) {
+			newState = PUNCH_LEFT;
+		}
+		if (state == WALK_RIGHT || state == IDLE_RIGHT) {
+			newState = PUNCH_RIGHT;
+		}
+	} else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+		velocity = glm::vec2(-2.0f, velocity.y);
+		if (state != JUMP_LEFT && state != JUMP_RIGHT
+			&& state != CLIMB && state != WALK_LEFT) {
+			newState = WALK_LEFT;
+		}
+		else if (state == JUMP_RIGHT) {
+			newState = JUMP_LEFT;
+		}
+	}
+	else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
+		velocity = glm::vec2(2.0f, velocity.y);
+		if (state != JUMP_LEFT && state != CLIMB 
+			&& state != JUMP_RIGHT && state != WALK_RIGHT) {
+			newState = WALK_RIGHT;
+		}
+		else if (state == JUMP_LEFT) {
+			newState = JUMP_RIGHT;
+		}
+	} else {
+		velocity = glm::vec2(0.f, velocity.y);
+		if (state == WALK_RIGHT || state == PUNCH_RIGHT) {
+			newState = IDLE_RIGHT;
+		}
+		else if (state == WALK_LEFT || state == PUNCH_LEFT) {
+			newState = IDLE_LEFT;
+		}
+	}
+	if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
+			velocity = glm::vec2(velocity.x, -4.0f);
+			acceleration = glm::vec2(0.f, .2f);
+		}
+		if (state == WALK_LEFT || state == PUNCH_LEFT || state == IDLE_LEFT) {
+			newState = JUMP_LEFT;
+		}
+		if (state == WALK_RIGHT || state == PUNCH_RIGHT || state == IDLE_RIGHT) {
+			newState = JUMP_RIGHT;
+		}
+	}
+
+	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
+		level->spawn(this);
+	}
+
+	velocity = velocity + acceleration;
+	if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f);
+	Entity::setPosition(position + glm::vec2(velocity.x, 0.f));
+	if (velocity.x < 0 && level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos)) {
+		velocity = glm::vec2(0.f, velocity.y);
+		Entity::setPosition(newPos);
+		if (newState == WALK_LEFT) newState = IDLE_LEFT;
+	} else if (velocity.x >= 0 && level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos)) {
+		velocity = glm::vec2(0.f, velocity.y);
+		Entity::setPosition(newPos);
+		if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
+	} 
+	Entity::setPosition(position + glm::vec2(0.f, velocity.y));
+	if (velocity.y < 0 && level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos)) {
+		Entity::setPosition(newPos);
+		velocity = glm::vec2(velocity.x, 0.f);
+	} else if (velocity.y >= 0 && level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos)) {
+		Entity::setPosition(newPos);
+		velocity = glm::vec2(velocity.x, 0.f);
+		acceleration = glm::vec2(0.f, 2.f);
+		if (newState == JUMP_RIGHT) newState = IDLE_RIGHT;
+		if (newState == JUMP_LEFT) newState = IDLE_LEFT;
+	}
+	else {
+		if (newState != JUMP_LEFT && newState != JUMP_RIGHT && velocity.y != 0.f) {
+			if (newState == IDLE_RIGHT || newState == WALK_RIGHT || newState == PUNCH_RIGHT) newState = JUMP_RIGHT;
+			if (newState == IDLE_LEFT || newState == WALK_LEFT || newState == PUNCH_LEFT) newState = JUMP_LEFT;
+		}
+	}
+
+	if (newState != state) {
+		state = newState;
+		sprite->setAnimation(state);
+	}
+
+	/*if(Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 	{
-		/*if(sprite->animation() != MOVE_LEFT)
-			sprite->changeAnimation(MOVE_LEFT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
 		if(level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
 		{
@@ -61,8 +156,6 @@ void Player::update(int deltaTime)
 
 	else if(Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 	{
-		/*if(sprite->animation() != MOVE_RIGHT)
-			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
 		if(level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
 		{
@@ -73,8 +166,6 @@ void Player::update(int deltaTime)
 
 	else if(Game::instance().getSpecialKey(GLUT_KEY_UP))
 	{
-		/*if(sprite->animation() != MOVE_RIGHT)
-			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
 		if(level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos))
 		{
@@ -85,21 +176,12 @@ void Player::update(int deltaTime)
 
 	else if(Game::instance().getSpecialKey(GLUT_KEY_DOWN))
 	{
-		/*if(sprite->animation() != MOVE_RIGHT)
-			sprite->changeAnimation(MOVE_RIGHT);*/
 		Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
 		if(level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
 		{
 			Entity::setPosition(newPos);
 			//sprite->changeAnimation(STAND_RIGHT);
 		}
-	}
-	/*else
-	{
-		if(sprite->animation() == MOVE_LEFT)
-			sprite->changeAnimation(STAND_LEFT);
-		else if(sprite->animation() == MOVE_RIGHT)
-			sprite->changeAnimation(STAND_RIGHT);
 	}*/
 	
 	/*if(bJumping)
