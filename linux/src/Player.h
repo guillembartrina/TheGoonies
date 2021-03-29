@@ -4,6 +4,8 @@
 
 #include "Entity.h"
 
+static float flyVel = 4.f;
+
 enum State { CLIMB, IDLE_RIGHT, WALK_RIGHT, JUMP_RIGHT, PUNCH_RIGHT, IDLE_LEFT, WALK_LEFT, JUMP_LEFT, PUNCH_LEFT};
 
 class Player : public Entity
@@ -17,17 +19,21 @@ class Player : public Entity
 	void update(int deltaTime) override;
 	void render(const Program &program) override;
 
-	bool active;
+	int getVit() const;
+	int getExp() const;
 	
 	private:
+
+	bool active;
 
 	State state;
 	int vit, exp;
 	glm::vec2 velocity;
 	glm::vec2 acceleration;
-	bool fly;
 
 	Texture* texture;
+
+	bool fly;
 
 };
 

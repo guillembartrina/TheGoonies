@@ -54,14 +54,15 @@ void Player::spawn(Level *level)
 void Player::update(int deltaTime)
 {
 	if(!active) return;
+	if (Game::instance().getSpecialKey(GLUT_KEY_F1)) {
+		fly = !fly;
+	}
+
 	glm::vec2 newPos;
 	if (fly) {
-		if (Game::instance().getKey('g')) {
-			fly = false;
-		}
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 		{
-			Entity::setPosition(Entity::getPosition() + glm::vec2(-2, 0));
+			Entity::setPosition(Entity::getPosition() + glm::vec2(-flyVel, 0));
 			if (level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
@@ -70,7 +71,7 @@ void Player::update(int deltaTime)
 
 		else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 		{
-			Entity::setPosition(Entity::getPosition() + glm::vec2(2, 0));
+			Entity::setPosition(Entity::getPosition() + glm::vec2(flyVel, 0));
 			if (level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
@@ -79,7 +80,7 @@ void Player::update(int deltaTime)
 
 		else if (Game::instance().getSpecialKey(GLUT_KEY_UP))
 		{
-			Entity::setPosition(Entity::getPosition() + glm::vec2(0, -2));
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, -flyVel));
 			if (level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
@@ -88,7 +89,7 @@ void Player::update(int deltaTime)
 
 		else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
 		{
-			Entity::setPosition(Entity::getPosition() + glm::vec2(0, 2));
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, flyVel));
 			if (level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
@@ -98,9 +99,7 @@ void Player::update(int deltaTime)
 	}
 
 	State newState = state;
-	if (Game::instance().getKey('f')) {
-		fly = true;
-	}
+
 	if (Game::instance().getKey('z')) {
 		if(state != JUMP_LEFT && state != JUMP_RIGHT) velocity = glm::vec2(0.f, velocity.y);
 		if (state == WALK_LEFT || state == IDLE_LEFT) {
@@ -196,6 +195,16 @@ void Player::render(const Program &program)
 {
 	if(!active) return;
 	Entity::render(program);
+}
+
+int Player::getVit() const
+{
+	return vit;
+}
+
+int Player::getExp() const
+{
+	return exp;
 }
 
 

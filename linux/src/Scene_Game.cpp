@@ -9,7 +9,6 @@
 
 Scene_Game::Scene_Game()
 {
-	pos = glm::ivec2(0, 0);
 }
 
 Scene_Game::~Scene_Game()
@@ -25,8 +24,7 @@ void Scene_Game::init()
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
-	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
-
+	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f));
 	player = new Player(program);
 	level = new Level("levels/1.txt", program);
 	level->spawn(player);
@@ -34,23 +32,8 @@ void Scene_Game::init()
 
 void Scene_Game::update(int deltaTime)
 {
-	if(Game::instance().getKey('a'))
-	{
-		pos += glm::ivec2(-32, 0);
-	}
-	if(Game::instance().getKey('s'))
-	{
-		pos += glm::ivec2(0, 32);
-	}
-	if(Game::instance().getKey('d'))
-	{
-		pos += glm::ivec2(32, 0);
-	}
-	if(Game::instance().getKey('w'))
-	{
-		pos += glm::ivec2(0, -32);
-	}
 	level->update(deltaTime);
+	gui->update(deltaTime);
 }
 
 void Scene_Game::render()
@@ -62,8 +45,7 @@ void Scene_Game::render()
 	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
-
-	text.render("DUDE", glm::vec2(50, 50), 24, glm::vec4(1, 1, 1, 1));
+	gui->render();
 }
 
 void Scene_Game::initShaders()

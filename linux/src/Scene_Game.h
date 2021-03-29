@@ -9,6 +9,7 @@
 #include "Texture.h"
 #include "Level.h"
 #include "Text.h"
+#include "GUI.h"
 
 
 class Scene_Game : public IScene
@@ -33,9 +34,7 @@ class Scene_Game : public IScene
 	Player* player;
 	Level* level;
 
-	glm::ivec2 pos;
-
-	Text text;
+	GUI* gui;
 
 };
 

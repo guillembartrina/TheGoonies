@@ -61,7 +61,4 @@ class Level
 
 };
 
-
-#endif // _TILE_MAP_INCLUDE
-
-
+#endif // _LEVEL_INCLUDE
