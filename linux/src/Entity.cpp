@@ -5,6 +5,7 @@
 
 Entity::Entity(EntityType type, const glm::vec2 &position, const glm::vec2 &size)
 {
+	destroy = false;
 	this->type = type;
 	this->position = position;
 	this->size = size;
@@ -62,6 +63,16 @@ void Entity::setPosition(const glm::vec2 &position) {
 
 EntityType Entity::getType() const{
 	return type;
+}
+
+void Entity::setDestroy()
+{
+	destroy = true;
+}
+
+bool Entity::toDestroy() const
+{
+	return destroy;
 }
 
 bool Entity::areColliding(Entity *a, Entity *b)

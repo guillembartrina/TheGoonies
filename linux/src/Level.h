@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 
 #include "Program.h"
 #include "Texture.h"
@@ -25,14 +26,14 @@ class Level
 	Level(const std::string& path, const Program& program);
 	~Level();
 
-	void spawn(Player* player);
+	void spawnPlayer(Player* player);
 
 	void render(const glm::vec4& rect, const Program& program) const;
 	void update(int deltatime);
 
 	glm::ivec2 getMapSize() const;
 	Player* getPlayer();
-	std::vector<Entity *>& getEntities();
+	std::list<Entity *>& getEntities();
 
 	bool collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
@@ -52,13 +53,14 @@ class Level
 	CollisionType collisionMap[96];
 	
 	Player* player;
-	std::vector<Entity *> entities;
+	std::list<Entity *> entities;
 	Tilemap* tileMap;
 
 	glm::ivec2 cam;
 
 	bool load(const std::string& path, const Program& program);
 	glm::vec2 roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const;
+	void addEntity(Entity* entity);
 
 };
 

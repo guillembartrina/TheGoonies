@@ -65,7 +65,7 @@ void Player::update(int deltaTime)
 	}
 
 	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
-		level->spawn(this);
+		level->spawnPlayer(this);
 	}
 
 	glm::vec2 newPos;

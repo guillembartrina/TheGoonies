@@ -63,7 +63,11 @@ void Rock::update(int deltaTime)
             break;
         case ROCK_CRASHING:
             timer -= deltaTime;
-            if(timer < 0) state = ROCK_DEAD;
+            if(timer < 0)
+            {
+                state = ROCK_DEAD;
+                Entity::setDestroy();
+            }
             break;
         default:
             break;

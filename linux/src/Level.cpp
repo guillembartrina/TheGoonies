@@ -16,9 +16,9 @@ Level::Level(const std::string& path, const Program& program)
 
 Level::~Level()
 {
-    for(unsigned int i = 0; i < entities.size(); i++)
+    for(Entity* e : entities)
     {
-        delete entities[i];
+        delete e;
     }
     delete tileMap;
     delete tilesheet;
@@ -26,7 +26,7 @@ Level::~Level()
     delete[] map;
 }
 
-void Level::spawn(Player* player)
+void Level::spawnPlayer(Player* player)
 {
     this->player = player;
     player->setPosition(glm::vec2(spawnPos) - tileSize*glm::vec2(0.25f, 0.2f)); //Change??
@@ -54,9 +54,9 @@ void Level::render(const glm::vec4& rect, const Program& program) const
     program.setUniformValue(program.getUniformLocation("modelview"), modelview);
     tileMap->render();
 
-	for (unsigned int i = 0; i < entities.size(); ++i)
+	for(Entity* e : entities)
     {
-		entities[i]->render(program);
+		e->render(program);
 	}
 	if(player) player->render(program);
 }
@@ -70,9 +70,12 @@ void Level::update(int deltatime)
         if(cam != glm::ivec2(playerX, playerY)) cam = glm::ivec2(playerX, playerY);
     }
 
-	for (unsigned int i = 0; i < entities.size(); ++i)
+	for(auto it = entities.begin(); it != entities.end(); )
     {
-		entities[i]->update(deltatime);
+		(*it)->update(deltatime);
+
+        if((*it)->toDestroy()) it = entities.erase(it);
+        else it++;
 	}
 	if(player) player->update(deltatime);
 }
@@ -87,7 +90,7 @@ Player* Level::getPlayer()
     return player;
 }
 
-std::vector<Entity *>& Level::getEntities()
+std::list<Entity *>& Level::getEntities()
 {
     return entities;
 }
@@ -399,10 +402,10 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 switch (index)
                 {
                     case '%':
-                        entities.push_back(new Sensor(SensorType::VINE_TOP, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j-1)), tileSize));
+                        addEntity(new Sensor(SensorType::VINE_TOP, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j-1)), tileSize));
                         break;
                     case '$':
-                        entities.push_back(new Sensor(SensorType::VINE_BOTTOM, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j)), tileSize));
+                        addEntity(new Sensor(SensorType::VINE_BOTTOM, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j)), tileSize));
                         break;
                     default:
                         break;
@@ -431,16 +434,14 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
-                entities.push_back(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
-                entities.back()->spawn(this);
+                addEntity(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
             case 2:
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
-                entities.push_back(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
-                entities.back()->spawn(this);
+                addEntity(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
             
@@ -458,4 +459,10 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
 glm::vec2 Level::roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const
 {
     return glm::vec2((roomPositions[room].x*roomSize.x+coords.x)*tileSize.x, (roomPositions[room].y*roomSize.y+coords.y)*tileSize.y);
+}
+
+void Level::addEntity(Entity* entity)
+{
+    entity->spawn(this);
+    entities.push_back(entity);
 }

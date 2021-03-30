@@ -29,6 +29,9 @@ class Entity
 	
 	static bool areColliding(Entity *a, Entity *b);
 
+	void setDestroy();
+	bool toDestroy() const;
+
 	protected:
 
 	EntityType type;
@@ -39,6 +42,8 @@ class Entity
 	glm::vec2 spriteOffset;
 
 	Level *level;
+
+	bool destroy;
 };
 
 

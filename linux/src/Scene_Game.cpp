@@ -27,7 +27,7 @@ void Scene_Game::init()
 	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f));
 	player = new Player(program);
 	level = new Level("levels/1.txt", program);
-	level->spawn(player);
+	level->spawnPlayer(player);
 }
 
 void Scene_Game::update(int deltaTime)
