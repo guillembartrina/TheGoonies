@@ -54,9 +54,15 @@ void Player::spawn(Level *level)
 void Player::update(int deltaTime)
 {
 	if(!active) return;
-	if (Game::instance().getSpecialKey(GLUT_KEY_F1)) {
-		fly = !fly;
+	
+	// Special modes
+	if (!fly && Game::instance().getSpecialKey(GLUT_KEY_F1)) {
+		fly = true;
 	}
+	if (fly && Game::instance().getSpecialKey(GLUT_KEY_F2)) {
+		fly = false;
+	}
+	
 
 	glm::vec2 newPos;
 	if (fly) {

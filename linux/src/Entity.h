@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-enum EntityType {PLAYER, VINE, MONSTER, OBSTACLE, DOOR, ITEM, SENSOR};
+enum EntityType {PLAYER, MONSTER, OBSTACLE, SENSOR, ITEM};
 
 class Level;
 

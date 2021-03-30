@@ -35,6 +35,10 @@ class Player : public Entity
 
 	bool fly;
 
+	// Power up si/no i usos restants
+	// Clau/No clau
+	// Amics rescatats (identificats per ENUM o el que sigui)
+
 };
 
 

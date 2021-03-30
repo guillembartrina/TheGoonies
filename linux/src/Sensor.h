@@ -3,7 +3,7 @@
 
 #include "Entity.h"
 
-enum SensorType {VINE_TOP, VINE_BOTTOM, ROCK};
+enum SensorType {VINE_TOP, VINE_BOTTOM, ROCK, DOOR};
 
 class Sensor : public Entity
 {
