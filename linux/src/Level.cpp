@@ -35,6 +35,8 @@ void Level::spawn(Player* player)
 
 void Level::render(const glm::vec4& rect, const Program& program) const
 {
+    program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
+    
     glm::mat4 modelview = glm::mat4(1.f);
     glm::mat4 camview = glm::mat4(1.f);
 
@@ -83,6 +85,11 @@ glm::ivec2 Level::getMapSize() const
 Player* Level::getPlayer()
 {
     return player;
+}
+
+std::vector<Entity *>& Level::getEntities()
+{
+    return entities;
 }
 
 bool Level::collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
@@ -228,7 +235,7 @@ bool Level::collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::
             case CollisionType::BOTTOM:
                 if((pos.y + size.y - 1.f) > (y+0.8f)*tileSize.y)
                 {
-                    shouldbe = glm::vec2(pos.x, (y+0.8f)*tileSize.y - size.y);
+                    shouldbe = glm::vec2(pos.x, (y+0.8f)*tileSize.y - size.y); //-1 pixel?
                     return true;
                 }
                 break;
@@ -387,6 +394,19 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
             {
                 index = dummy[i];
                 map[(roomOffsetY+j)*mapSize.x+(roomOffsetX+i)] = (index-' ');
+
+                //Map-wise entities
+                switch (index)
+                {
+                    case '%':
+                        entities.push_back(new Sensor(SensorType::VINE_TOP, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j-1)), tileSize));
+                        break;
+                    case '$':
+                        entities.push_back(new Sensor(SensorType::VINE_BOTTOM, roomRelativeToWorldCoords(roomPositions, room, glm::ivec2(i, j)), tileSize));
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }

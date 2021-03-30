@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "Level.h"
+#include "Sensor.h"
 
 #include <GL/glut.h>
 #include <iostream>
@@ -62,7 +63,10 @@ void Player::update(int deltaTime)
 	if (fly && Game::instance().getSpecialKey(GLUT_KEY_F2)) {
 		fly = false;
 	}
-	
+
+	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
+		level->spawn(this);
+	}
 
 	glm::vec2 newPos;
 	if (fly) {
@@ -153,10 +157,6 @@ void Player::update(int deltaTime)
 		if (state == WALK_RIGHT || state == PUNCH_RIGHT || state == IDLE_RIGHT) {
 			newState = JUMP_RIGHT;
 		}
-	}
-
-	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
-		level->spawn(this);
 	}
 
 	velocity = velocity + acceleration;

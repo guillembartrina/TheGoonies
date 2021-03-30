@@ -5,7 +5,7 @@ images/tileset.png
 4 1
 0123
 0 13 8
- &BCDEFGHIQRSTVWXYZ[\]`abcdghijklmnpqrstv
+ &BCDEFGHIQRSTUVWXYZ[\]`abcdghijklmnpqrstv
 '()3467<=>?JKLMNOwxyz{|}~
 !"*#$%89@AP^_efno
 5:;

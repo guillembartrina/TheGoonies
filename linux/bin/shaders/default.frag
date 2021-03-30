@@ -6,6 +6,7 @@ out vec4 outColor;
 uniform sampler2D tex;
 uniform int customTexCoord;
 uniform vec4 frame;
+uniform vec4 color;
 
 void main()
 {
@@ -22,6 +23,6 @@ void main()
 	}
 	
 	if(texColor.a < 0.5) discard;
-	outColor = texColor;
+	outColor = texColor * color;
 }
 

@@ -94,6 +94,7 @@ void Scene_Menu::render()
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0));
 	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
+	program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
 	sprite->render(program);
 }
 

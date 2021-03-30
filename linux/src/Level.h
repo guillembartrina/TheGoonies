@@ -32,6 +32,7 @@ class Level
 
 	glm::ivec2 getMapSize() const;
 	Player* getPlayer();
+	std::vector<Entity *>& getEntities();
 
 	bool collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;

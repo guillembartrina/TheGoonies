@@ -37,6 +37,7 @@ void GUI::render()
 {
     program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
+    program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
     background->render(program);
     text.render("HELLO", glm::vec2(10, 40), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
 }

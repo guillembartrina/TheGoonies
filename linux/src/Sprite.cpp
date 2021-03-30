@@ -28,6 +28,7 @@ Sprite::Sprite(const glm::vec2& position, const glm::vec2& size, Texture* sprite
 	this->position = position;
 	currentFrame = -1;
 	currentAnimation = -1;
+	color = glm::ivec4(1.f);
 }
 
 Sprite::~Sprite()
@@ -72,11 +73,16 @@ void Sprite::render(const Program& program) const
 		program.setUniformValue(program.getUniformLocation("frame"),
 			glm::vec4(frames[currentFrame]->u, frames[currentFrame]->v, frames[currentFrame]->w, frames[currentFrame]->h));
 	}
-	//program.setUniformValue(program.getUniformLocation("texCoordDispl"), glm::vec2(texCoordDispl.x, texCoordDispl.y));
+	program.setUniformValue(program.getUniformLocation("color"), color);
 	spritesheet->use();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
+}
+
+void Sprite::setColor(const glm::vec4& color)
+{
+	this->color = color;
 }
 
 void Sprite::addFrame(Frame* frame)

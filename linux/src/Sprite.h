@@ -54,6 +54,8 @@ class Sprite
 	void update(int deltaTime);
 	void render(const Program& program) const;
 
+	void setColor(const glm::vec4& color);
+
 	void addFrame(Frame* frame);
 	void addAnimation(Animation* animation);
 	void setFrame(int id);
@@ -75,6 +77,8 @@ class Sprite
 	float currentTime;
 	std::vector<Frame *> frames;
 	std::vector<Animation *> animations;
+
+	glm::vec4 color;
 
 };
 
