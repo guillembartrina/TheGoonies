@@ -24,9 +24,9 @@ Entity* Entity::texturedEntity(EntityType type, const glm::vec2 &position, const
 	return entity;
 }
 
-void Entity::setSprite(Sprite* sprite, const glm::vec2& spriteOffset)
+void Entity::setSprite(Sprite* sprite, const glm::vec2& spriteOffset, bool del)
 {
-	if(sprite) delete this->sprite;
+	if(del && sprite) delete this->sprite;
 	this->sprite = sprite;
 	this->spriteOffset = spriteOffset;
 	sprite->setPosition(position + spriteOffset);

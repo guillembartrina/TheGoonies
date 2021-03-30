@@ -3,7 +3,7 @@
 
 #include "Sprite.h"
 
-enum EntityType {PLAYER, MONSTER, OBSTACLE, SENSOR, ITEM};
+enum EntityType {PLAYER, MONSTER, OBSTACLE, SENSOR, ITEM, NONE};
 
 class Level;
 
@@ -15,7 +15,7 @@ class Entity
 	Entity(EntityType type, const glm::vec2 &position, const glm::vec2 &size);
 	static Entity* texturedEntity(EntityType type, const glm::vec2 &position, const glm::vec2 &size, Texture* spritesheet, const Program& program);
 	~Entity();
-	void setSprite(Sprite* sprite, const glm::vec2& spriteOffset = glm::vec2(0.f));
+	void setSprite(Sprite* sprite, const glm::vec2& spriteOffset = glm::vec2(0.f), bool del = false);
 	virtual void spawn(Level *level);
 
 	virtual void update(int deltaTime);
