@@ -17,7 +17,7 @@ Item::Item(ItemCode code, const glm::vec2 &position, Tilesheet* spritesheet, con
     }
     else if(code == POTION)
     {
-         pos = glm::ivec2(3, 4);
+         pos = glm::ivec2(0, 3);
     }
     else if(code >= BAG)
     {

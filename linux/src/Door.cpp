@@ -18,7 +18,7 @@ Door::Door(int unlocks, ItemCode item, const glm::vec2 &position, Tilesheet* spr
     Entity::setSprite(sprite, -tileSize);
 
     lock = new Sprite(glm::vec2(0.f), tileSize, spritesheet->getTexture(), program);
-    texCoords = spritesheet->getTexCoords(glm::ivec2(2, 4));
+    texCoords = spritesheet->getTexCoords(glm::ivec2(1, 3));
     lock->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
     lock->setFrame(0);
 }

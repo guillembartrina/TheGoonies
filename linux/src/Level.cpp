@@ -97,6 +97,11 @@ std::list<Entity *>& Level::getEntities()
     return entities;
 }
 
+bool Level::inScreen(const glm::vec2& pos) const
+{
+    return (glm::ivec2(pos) / (glm::ivec2(tileSize) * roomSize) == cam);
+}
+
 bool Level::collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
 {
     int x = pos.x / tileSize.x;
