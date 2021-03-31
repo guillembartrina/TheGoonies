@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "Rock.h"
 #include "Droplet.h"
+#include "Item.h"
+#include "Door.h"
 
 #include <iostream>
 #include <fstream>
@@ -444,7 +446,21 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 addEntity(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            
+            case 3:
+            {
+                int elementId, elementRoom, elementX, elementY;
+                file >> elementId >> elementRoom >> elementX >> elementY;
+                addEntity(new Item(ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            }
+                break;
+            case 4:
+            {
+                int elementId, elementConfig, elementRoom, elementX, elementY;
+                file >> elementId >> elementConfig >> elementRoom >> elementX >> elementY;
+                if(elementId == -1) elementId = ITEM_NONE;
+                addEntity(new Door(elementConfig, ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            }
+                break;
             default:
                 break;
         }

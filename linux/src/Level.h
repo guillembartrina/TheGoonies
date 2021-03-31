@@ -43,6 +43,8 @@ class Level
 	bool getFirstOf(const glm::vec2& pos, const glm::vec2& size, int direction, glm::vec2& first) const;
 	bool getFirstOf_Tiles(const glm::ivec2& ini, int direction, CollisionType type, glm::ivec2& first) const;
 
+	void addEntity(Entity* entity);
+
 	private:
 
 	std::string name;
@@ -60,7 +62,6 @@ class Level
 
 	bool load(const std::string& path, const Program& program);
 	glm::vec2 roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const;
-	void addEntity(Entity* entity);
 
 };
 
