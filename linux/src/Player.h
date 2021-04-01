@@ -3,6 +3,7 @@
 #define _PLAYER_INCLUDE
 
 #include "Entity.h"
+#include "Item.h"
 
 static float flyVel = 4.f;
 
@@ -26,10 +27,17 @@ class Player : public Entity
 
 	bool active;
 
+	void updateMovement();
+	void updateEntityCollisions();
+
+	void handleEntityCollisionItem(Entity *it);
+
 	State state;
 	int vit, exp;
 	glm::vec2 velocity;
 	glm::vec2 acceleration;
+	int hurtTimer;
+	bool hasKey;
 
 	Texture* texture;
 

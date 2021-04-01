@@ -15,6 +15,7 @@ class Item : public Entity
 
     void update(int deltaTime) override;
 	void render(const Program &program) override;
+	ItemCode getCode() const;
 
 	private:
 

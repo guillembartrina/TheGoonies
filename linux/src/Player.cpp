@@ -2,9 +2,11 @@
 #include "Game.h"
 #include "Level.h"
 #include "Sensor.h"
+#include "Door.h"
 
 #include <GL/glut.h>
 #include <iostream>
+#include <list>
 
 Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*glm::vec2(1.5f, 2.f))
 {
@@ -12,6 +14,10 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 
 	this->velocity = glm::vec2(0.f, 0.f);
 	this->acceleration = glm::vec2(0.f, 2.f);
+	this->vit = 50;
+	this->exp = 0;
+	this->hurtTimer = -1;
+	this->hasKey = false;
 
 	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
 	Sprite* sprite = new Sprite(glm::vec2(0.f), tileSize*2.f, texture, program);
@@ -68,6 +74,16 @@ void Player::update(int deltaTime)
 		level->spawnPlayer(this);
 	}
 
+	updateMovement();
+	if(hurtTimer >= 0)hurtTimer -= deltaTime;
+	updateEntityCollisions();
+
+
+	
+	Entity::update(deltaTime);
+}
+
+void Player::updateMovement() {
 	glm::vec2 newPos;
 	if (fly) {
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
@@ -160,22 +176,13 @@ void Player::update(int deltaTime)
 	}
 
 	velocity = velocity + acceleration;
-	if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f);
-	Entity::setPosition(position + glm::vec2(velocity.x, 0.f));
-	if (velocity.x < 0 && level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos)) {
-		velocity = glm::vec2(0.f, velocity.y);
-		Entity::setPosition(newPos);
-		if (newState == WALK_LEFT) newState = IDLE_LEFT;
-	} else if (velocity.x >= 0 && level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos)) {
-		velocity = glm::vec2(0.f, velocity.y);
-		Entity::setPosition(newPos);
-		if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
-	} 
+	if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f); 
 	Entity::setPosition(position + glm::vec2(0.f, velocity.y));
 	if (velocity.y < 0 && level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos)) {
 		Entity::setPosition(newPos);
 		velocity = glm::vec2(velocity.x, 0.f);
-	} else if (velocity.y >= 0 && level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos)) {
+	}
+	else if (velocity.y >= 0 && level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos)) {
 		Entity::setPosition(newPos);
 		velocity = glm::vec2(velocity.x, 0.f);
 		acceleration = glm::vec2(0.f, 2.f);
@@ -188,13 +195,65 @@ void Player::update(int deltaTime)
 			if (newState == IDLE_LEFT || newState == WALK_LEFT || newState == PUNCH_LEFT) newState = JUMP_LEFT;
 		}
 	}
+	Entity::setPosition(position + glm::vec2(velocity.x, 0.f));
+	if (velocity.x < 0 && level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos)) {
+		velocity = glm::vec2(0.f, velocity.y);
+		Entity::setPosition(newPos);
+		if (newState == WALK_LEFT) newState = IDLE_LEFT;
+	}
+	else if (velocity.x >= 0 && level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos)) {
+		velocity = glm::vec2(0.f, velocity.y);
+		Entity::setPosition(newPos);
+		if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
+	}
+	
 
 	if (newState != state) {
 		state = newState;
 		sprite->setAnimation(state);
 	}
-	
-	Entity::update(deltaTime);
+}
+
+void Player::updateEntityCollisions() {
+	std::list<Entity *> entities = level->getEntities();
+	for (std::list<Entity *>::iterator it = entities.begin(); it != entities.end(); ++it) {
+		if (areColliding(this, *it)) {
+			switch ((*it)->getType()) {
+			case OBSTACLE:
+				if (hurtTimer < 0) {
+					vit -= 5;
+					hurtTimer = 1000;
+				}
+				break;
+			case ITEM:
+				handleEntityCollisionItem(*it);
+				break;
+			case DOOR:
+				Door *door = (Door *)*it;
+				if (hasKey) {
+					door->unlock();
+					hasKey = false;
+				}
+				break;
+			}
+		}
+	}
+}
+
+void Player::handleEntityCollisionItem(Entity *it) {
+	Item *item = (Item *)it;
+	switch (item->getCode()) {
+	case KEY:
+		if (!hasKey) {
+			item->setDestroy();
+			hasKey = true;
+		}
+		break;
+	case POTION:
+		vit = (vit + 20) > 50 ? 50 : vit + 20;
+		item->setDestroy();
+		break;
+	}
 }
 
 void Player::render(const Program &program)

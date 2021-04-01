@@ -16,10 +16,10 @@ class GUI
 
 	public:
 
-	GUI(const glm::mat4& projection, const glm::vec4& rect);
+	GUI(const glm::mat4& projection, const glm::vec4& rect, int vit, int exp);
 	~GUI();
 
-	void update(int deltatime);
+	void update(int deltatime, int vit, int exp);
 	void render();
 
 	private:
@@ -29,6 +29,8 @@ class GUI
 
 	Text text;
     Quad* background;
+	int vit;
+	int exp;
 
 };
 

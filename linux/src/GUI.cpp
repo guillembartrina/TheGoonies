@@ -5,7 +5,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-GUI::GUI(const glm::mat4& projection, const glm::vec4& rect)
+GUI::GUI(const glm::mat4& projection, const glm::vec4& rect, int vit, int exp)
 {
     Shader vert(ShaderType_Vertex), frag(ShaderType_Fragment);
 
@@ -16,6 +16,9 @@ GUI::GUI(const glm::mat4& projection, const glm::vec4& rect)
 	program.attachShader(vert);
 	program.attachShader(frag);
 	program.link();
+
+	this->vit = vit;
+	this->exp = exp;
 
     this->projection = projection;
 
@@ -28,9 +31,10 @@ GUI::~GUI()
     delete background;
 }
 
-void GUI::update(int deltatime)
+void GUI::update(int deltatime, int vit, int exp)
 {
-
+	this->vit = vit;
+	this->exp = exp;
 }
 
 void GUI::render()
@@ -39,5 +43,5 @@ void GUI::render()
 	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
     program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
     background->render(program);
-    text.render("HELLO", glm::vec2(10, 40), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
+    text.render(std::to_string(vit), glm::vec2(10, 40), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
 }

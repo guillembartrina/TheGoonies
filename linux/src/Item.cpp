@@ -41,3 +41,7 @@ void Item::render(const Program &program)
 {
     Entity::render(program);
 }
+
+ItemCode Item::getCode() const {
+	return code;
+}

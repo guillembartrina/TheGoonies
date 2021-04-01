@@ -24,16 +24,16 @@ void Scene_Game::init()
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
-	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f));
 	player = new Player(program);
 	level = new Level("levels/1.txt", program);
 	level->spawnPlayer(player);
+	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player->getVit(), player->getExp());
 }
 
 void Scene_Game::update(int deltaTime)
 {
 	level->update(deltaTime);
-	gui->update(deltaTime);
+	gui->update(deltaTime, player->getVit(), player->getExp());
 }
 
 void Scene_Game::render()
