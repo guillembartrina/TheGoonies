@@ -26,8 +26,6 @@ class Door : public Entity
 	Tilesheet* ts;
 	const Program& program;
 	Sprite* lock;
-	bool destroying;
-	int timer;
 };
 
 #endif // _ROCK_INCLUDE

@@ -7,29 +7,43 @@ Item::Item(ItemCode code, const glm::vec2 &position, Tilesheet* spritesheet, con
 {
     this->code = code;
 
-    Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
-
-    glm::ivec2 pos;
+    glm::vec4 texCoords;
 
     if(code == KEY)
     {
-        pos = glm::ivec2(1, 4);
+        Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
+        texCoords = spritesheet->getTexCoords(glm::ivec2(1, 4), glm::ivec2(1, 1));
+        sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+        sprite->setFrame(0);
+        Entity::setSprite(sprite);
     }
     else if(code == POTION)
     {
-         pos = glm::ivec2(0, 3);
+        Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
+        texCoords = spritesheet->getTexCoords(glm::ivec2(0, 3), glm::ivec2(1, 1));
+        sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+        sprite->setFrame(0);
+        Entity::setSprite(sprite);
     }
-    else if(code >= BAG)
+    else if(code >= BAG && code < FRIEND)
     {
-         pos = glm::ivec2(0, 4);
+        Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
+        texCoords = spritesheet->getTexCoords(glm::ivec2(0, 4), glm::ivec2(1, 1));
+        sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+        sprite->setFrame(0);
+        Entity::setSprite(sprite);
     }
-
-    glm::vec4 texCoords = spritesheet->getTexCoords(pos, glm::ivec2(1, 1));
-
-    sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
-    sprite->setFrame(0);
-
-    Entity::setSprite(sprite);
+    else if(code == FRIEND)
+    {
+        Sprite* sprite = new Sprite(position, glm::vec2(tileSize.x, tileSize.y*2.f), spritesheet->getTexture(), program);
+        texCoords = spritesheet->getTexCoords(glm::ivec2(7, 3), glm::ivec2(1, 2));
+        sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+        texCoords = spritesheet->getTexCoords(glm::ivec2(8, 3), glm::ivec2(1, 2));
+        sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+        sprite->addAnimation(new Animation({0, 1}, {200, 200}));
+        sprite->setAnimation(0);
+        Entity::setSprite(sprite);
+    }
 }
 
 void Item::update(int deltaTime)

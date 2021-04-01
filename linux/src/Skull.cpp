@@ -9,8 +9,8 @@ Skull::Skull(const glm::vec2 &position, Tilesheet* spritesheet, const Program& p
     : Entity(EntityType::MONSTER, position, tileSize)
 {
     active = false;
-    jump = (randomInt() % 2 == 0 ? false : true);
-    direction = (randomInt() % 2 == 0 ? false : true);
+    jump = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
+    direction = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
 
     Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
     glm::vec4 texCoords = spritesheet->getTexCoords(glm::ivec2(2, 3));
@@ -37,22 +37,19 @@ void Skull::spawn(Level *level)
 {
     Entity::spawn(level);
 
-    glm::ivec2 first;
+    glm::ivec2 first, first2;
     level->getFirstOf_Tiles(glm::ivec2(getPosition() / tileSize), 2, CollisionType::BOTTOM, first);
     floor = first.y * tileSize.x + tileSize.y*0.8f;
 
     glm::ivec2 pos = first;
-    if(!level->getFirstOf_Tiles(pos, 1, CollisionType::ANY, first))
-    {
-        level->getFirstOf_Tiles(pos, 1, CollisionType::RIGHT, first);
-    }
-    right = first.x * tileSize.x;
+    int min = -100, max = 100000;
+    if(level->getFirstOf_Tiles(pos, 1, CollisionType::ANY, first) && first.x < max) max = first.x;
+    if(level->getFirstOf_Tiles(pos, 1, CollisionType::RIGHT, first) && first.x < max) max = first.x;
+    right = max * tileSize.x;
 
-    if(!level->getFirstOf_Tiles(pos, 3, CollisionType::ANY, first))
-    {
-        level->getFirstOf_Tiles(pos, 3, CollisionType::LEFT, first);
-    }
-    left = (first.x + 1) * tileSize.x;
+    if(level->getFirstOf_Tiles(pos, 3, CollisionType::ANY, first) && first.x > min) min = first.x;
+    if(level->getFirstOf_Tiles(pos, 3, CollisionType::LEFT, first) && first.x > min) min = first.x;
+    left = (min + 1) * tileSize.x;
 }
 
 void Skull::update(int deltaTime)
@@ -69,7 +66,7 @@ void Skull::update(int deltaTime)
         newPos.x = getPosition().x + 2.f;
         if(newPos.x + getSize().x > right)
         {
-            direction = !direction;
+            direction = false;
             sprite->setAnimation((direction ? 0 : 1));
             newPos.x = getPosition().x;
         }
@@ -79,7 +76,7 @@ void Skull::update(int deltaTime)
         newPos.x = getPosition().x - 2.f;
         if(newPos.x < left)
         {
-            direction = !direction;
+            direction = true;
             sprite->setAnimation((direction ? 0 : 1));
             newPos.x = getPosition().x;
         }

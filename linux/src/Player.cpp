@@ -264,7 +264,7 @@ void Player::handleEntityCollisionItem(Entity *it) {
 	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
 		
 		item->setDestroy();
-	} else if (item->getCode() == ITEM_NONE) {
+	} else if (item->getCode() == FRIEND) {
 		item->setDestroy();
 		++friendCounter;
 	}

@@ -3,10 +3,25 @@
 
 #include <time.h>
 
-static int randomInt()
+class RandGen
 {
-    srand(time(NULL));
-    return rand();
-}
+    public:
+    
+    static RandGen& instance()
+    {
+        static RandGen gen;
+        return gen;
+    }
+
+    RandGen()
+    {
+        srand(time(NULL));
+    }
+
+    int randomInt()
+    {
+        return rand();
+    }
+};
 
 #endif

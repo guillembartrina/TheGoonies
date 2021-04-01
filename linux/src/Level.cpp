@@ -5,6 +5,7 @@
 #include "Droplet.h"
 #include "Item.h"
 #include "Door.h"
+#include "Skull.h"
 
 #include <iostream>
 #include <fstream>
@@ -462,8 +463,14 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
             {
                 int elementId, elementConfig, elementRoom, elementX, elementY;
                 file >> elementId >> elementConfig >> elementRoom >> elementX >> elementY;
-                if(elementId == -1) elementId = ITEM_NONE;
                 addEntity(new Door(elementConfig, ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            }
+                break;
+            case 5:
+            {
+                int elementRoom, elementX, elementY;
+                file >> elementRoom >> elementX >> elementY;
+                addEntity(new Skull(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
             default:
