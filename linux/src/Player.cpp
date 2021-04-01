@@ -81,7 +81,7 @@ void Player::update(int deltaTime)
 		if(hurtTimer < 0) sprite->setReverseColor(false);
 	}
 	updateEntityCollisions();
-	
+
 	Entity::update(deltaTime);
 }
 
@@ -180,7 +180,6 @@ void Player::updateMovement() {
 	glm::vec2 oldPos = Entity::getPosition();
 
 	velocity = velocity + acceleration;
-
 	//if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f);
 
 	float futureY = oldPos.y + velocity.y;
@@ -206,16 +205,6 @@ void Player::updateMovement() {
 		if (state == IDLE_RIGHT || state == WALK_RIGHT || state == PUNCH_RIGHT) newState = JUMP_RIGHT;
 		if (state == IDLE_LEFT || state == WALK_LEFT || state == PUNCH_LEFT) newState = JUMP_LEFT;
 	} 
-	
-	//Entity::setPosition(position + glm::vec2(0.f, velocity.y));
-	/*
-	else {
-		if (newState != JUMP_LEFT && newState != JUMP_RIGHT && velocity.y != 0.f) {
-			if (newState == IDLE_RIGHT || newState == WALK_RIGHT || newState == PUNCH_RIGHT) newState = JUMP_RIGHT;
-			if (newState == IDLE_LEFT || newState == WALK_LEFT || newState == PUNCH_LEFT) newState = JUMP_LEFT;
-		}
-	}
-	*/
 
 	float futureX = oldPos.x + velocity.x;
 
