@@ -18,6 +18,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	this->exp = 0;
 	this->hurtTimer = -1;
 	this->hasKey = false;
+	this->friendCounter = 0;
 
 	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
 	Sprite* sprite = new Sprite(glm::vec2(0.f), tileSize*2.f, texture, program);
@@ -75,7 +76,10 @@ void Player::update(int deltaTime)
 	}
 
 	updateMovement();
-	if(hurtTimer >= 0)hurtTimer -= deltaTime;
+	if (hurtTimer >= 0) {
+		hurtTimer -= deltaTime;
+		if(hurtTimer < 0) sprite->setReverseColor(false);
+	}
 	updateEntityCollisions();
 
 
@@ -218,23 +222,18 @@ void Player::updateEntityCollisions() {
 	std::list<Entity *> entities = level->getEntities();
 	for (std::list<Entity *>::iterator it = entities.begin(); it != entities.end(); ++it) {
 		if (areColliding(this, *it)) {
-			switch ((*it)->getType()) {
-			case OBSTACLE:
-				if (hurtTimer < 0) {
-					vit -= 5;
-					hurtTimer = 1000;
-				}
-				break;
-			case ITEM:
+			if ((*it)->getType() == OBSTACLE) {
+				getHurt(5);
+			} else if ((*it)->getType() == ITEM) {
 				handleEntityCollisionItem(*it);
-				break;
-			case DOOR:
+			} else if ((*it)->getType() == DOOR) {
 				Door *door = (Door *)*it;
 				if (hasKey) {
 					door->unlock();
 					hasKey = false;
 				}
-				break;
+			} else if ((*it)->getType() == MONSTER) {
+				getHurt(10);
 			}
 		}
 	}
@@ -242,17 +241,28 @@ void Player::updateEntityCollisions() {
 
 void Player::handleEntityCollisionItem(Entity *it) {
 	Item *item = (Item *)it;
-	switch (item->getCode()) {
-	case KEY:
+	if (item->getCode() == KEY) {
 		if (!hasKey) {
 			item->setDestroy();
 			hasKey = true;
 		}
-		break;
-	case POTION:
+	} else if (item->getCode() == POTION) {
 		vit = (vit + 20) > 50 ? 50 : vit + 20;
 		item->setDestroy();
-		break;
+	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
+		
+		item->setDestroy();
+	} else if (item->getCode() == ITEM_NONE) {
+		item->setDestroy();
+		++friendCounter;
+	}
+}
+
+void Player::getHurt(int damage) {
+	if (hurtTimer < 0) {
+		vit -= damage;
+		hurtTimer = 1000;
+		sprite->setReverseColor(true);
 	}
 }
 

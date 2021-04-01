@@ -26,6 +26,7 @@ Sprite::Sprite(const glm::vec2& position, const glm::vec2& size, Texture* sprite
 	glEnableVertexAttribArray(texCoordLocation);
 	this->spritesheet = spritesheet;
 	this->position = position;
+	this->reverseColor = false;
 	currentFrame = -1;
 	currentAnimation = -1;
 	color = glm::ivec4(1.f);
@@ -74,10 +75,12 @@ void Sprite::render(const Program& program) const
 			glm::vec4(frames[currentFrame]->u, frames[currentFrame]->v, frames[currentFrame]->w, frames[currentFrame]->h));
 	}
 	program.setUniformValue(program.getUniformLocation("color"), color);
+	program.setUniformValue(program.getUniformLocation("reverseColor"), reverseColor);
 	spritesheet->use();
 	glBindVertexArray(VAO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 	glDisable(GL_TEXTURE_2D);
+	program.setUniformValue(program.getUniformLocation("reverseColor"), false);
 }
 
 void Sprite::setColor(const glm::vec4& color)
@@ -119,6 +122,10 @@ int Sprite::getAnimation() const
 void Sprite::setPosition(const glm::vec2& pos)
 {
 	position = pos;
+}
+
+void Sprite::setReverseColor(const bool rc) {
+	reverseColor = rc;
 }
 
 glm::vec2 Sprite::getPosition() const

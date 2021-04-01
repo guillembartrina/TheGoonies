@@ -7,6 +7,7 @@ uniform sampler2D tex;
 uniform int customTexCoord;
 uniform vec4 frame;
 uniform vec4 color;
+uniform bool reverseColor;
 
 void main()
 {
@@ -24,5 +25,6 @@ void main()
 	
 	if(texColor.a < 0.5) discard;
 	outColor = texColor * color;
+	if(reverseColor) outColor = vec4(1.0f, 0f, 1.0f, 1.0f) - outColor;
 }
 

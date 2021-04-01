@@ -31,6 +31,7 @@ class Player : public Entity
 	void updateEntityCollisions();
 
 	void handleEntityCollisionItem(Entity *it);
+	void getHurt(int damage);
 
 	State state;
 	int vit, exp;
@@ -38,6 +39,7 @@ class Player : public Entity
 	glm::vec2 acceleration;
 	int hurtTimer;
 	bool hasKey;
+	int friendCounter;
 
 	Texture* texture;
 

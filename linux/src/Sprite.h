@@ -63,6 +63,7 @@ class Sprite
 	int getAnimation() const;
 	
 	void setPosition(const glm::vec2 &pos);
+	void setReverseColor(const bool rc);
 	glm::vec2 getPosition() const;
 
 	private:
@@ -71,6 +72,7 @@ class Sprite
 	GLuint VBO;
 	Texture* spritesheet;
 
+	bool reverseColor;
 	glm::vec2 position;
 
 	int currentAnimation, currentFrame, currentKeyFrame;
