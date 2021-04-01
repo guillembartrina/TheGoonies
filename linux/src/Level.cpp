@@ -131,7 +131,7 @@ bool Level::collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::
                 }
                 break;
             case CollisionType::BOTTOM:
-                if((pos.y + size.y - 1.f) > (y+0.8)*tileSize.y)
+                if(pos.y + size.y > y*tileSize.y + tileSize.y*0.8f)
                 {
                     shouldbe = glm::vec2((x+1)*tileSize.x, pos.y);
                     return true;
@@ -173,7 +173,7 @@ bool Level::collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm:
                 }
                 break;
             case CollisionType::BOTTOM:
-                if((pos.y + size.y - 1.f) > (y+0.8f)*tileSize.y)
+                if(pos.y + size.y > y*tileSize.y + tileSize.y*0.8f)
                 {
                     shouldbe = glm::vec2(x*tileSize.x - size.x, pos.y);
                     return true;
@@ -243,9 +243,9 @@ bool Level::collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::
                 return true;
                 break;
             case CollisionType::BOTTOM:
-                if((pos.y + size.y - 1.f) > (y+0.8f)*tileSize.y)
+                if(pos.y + size.y > y*tileSize.y + tileSize.y*0.8f)
                 {
-                    shouldbe = glm::vec2(pos.x, (y+0.8f)*tileSize.y - size.y); //-1 pixel?
+                    shouldbe = glm::vec2(pos.x, y*tileSize.y + tileSize.y*0.8f - size.y); //-1 pixel?
                     return true;
                 }
                 break;
@@ -257,7 +257,7 @@ bool Level::collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::
                 }
                 break;
             case CollisionType::RIGHT:
-                if((pos.x + size.x - 1.f) > (x+0.5f)*tileSize.x)
+                if(pos.x + size.x > (x+0.5f)*tileSize.x)
                 {
                     shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
                     return true;

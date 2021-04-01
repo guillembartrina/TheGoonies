@@ -25,6 +25,6 @@ void main()
 	
 	if(texColor.a < 0.5) discard;
 	outColor = texColor * color;
-	if(reverseColor) outColor = vec4(1.0f, 0f, 1.0f, 1.0f) - outColor;
+	if(reverseColor) outColor = vec4(1.0f, 0.f, 1.0f, 1.0f) - outColor;
 }
 

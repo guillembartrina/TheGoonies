@@ -13,7 +13,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	active = false;
 
 	this->velocity = glm::vec2(0.f, 0.f);
-	this->acceleration = glm::vec2(0.f, 2.f);
+	this->acceleration = glm::vec2(0.f, 0.2f);
 	this->vit = 50;
 	this->exp = 0;
 	this->hurtTimer = -1;
@@ -81,8 +81,6 @@ void Player::update(int deltaTime)
 		if(hurtTimer < 0) sprite->setReverseColor(false);
 	}
 	updateEntityCollisions();
-
-
 	
 	Entity::update(deltaTime);
 }
@@ -166,10 +164,10 @@ void Player::updateMovement() {
 			newState = IDLE_LEFT;
 		}
 	}
+
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
 		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
 			velocity = glm::vec2(velocity.x, -4.0f);
-			acceleration = glm::vec2(0.f, .2f);
 		}
 		if (state == WALK_LEFT || state == PUNCH_LEFT || state == IDLE_LEFT) {
 			newState = JUMP_LEFT;
@@ -179,38 +177,63 @@ void Player::updateMovement() {
 		}
 	}
 
+	glm::vec2 oldPos = Entity::getPosition();
+
 	velocity = velocity + acceleration;
-	if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f); 
-	Entity::setPosition(position + glm::vec2(0.f, velocity.y));
-	if (velocity.y < 0 && level->collisionMoveUp(Entity::getPosition(), Entity::getSize(), newPos)) {
-		Entity::setPosition(newPos);
-		velocity = glm::vec2(velocity.x, 0.f);
+
+	//if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f);
+
+	float futureY = oldPos.y + velocity.y;
+
+	if(velocity.y != 0.f)
+	{
+		if(velocity.y < 0.f && level->collisionMoveUp(glm::vec2(oldPos.x, futureY), Entity::getSize(), newPos))
+		{
+			futureY = newPos.y;
+			velocity = glm::vec2(velocity.x, 0.f);
+		}
+		else if (velocity.y > 0 && level->collisionMoveDown(glm::vec2(oldPos.x, futureY), Entity::getSize(), newPos))
+		{
+			futureY = newPos.y;
+			velocity = glm::vec2(velocity.x, 0.f);
+			if(state == JUMP_RIGHT) newState = (velocity.x > 0.f ? WALK_RIGHT : IDLE_RIGHT);
+			if(state == JUMP_LEFT) newState = (velocity.x < 0.f ? WALK_LEFT : IDLE_LEFT);
+		}
 	}
-	else if (velocity.y >= 0 && level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos)) {
-		Entity::setPosition(newPos);
-		velocity = glm::vec2(velocity.x, 0.f);
-		acceleration = glm::vec2(0.f, 2.f);
-		if (newState == JUMP_RIGHT) newState = IDLE_RIGHT;
-		if (newState == JUMP_LEFT) newState = IDLE_LEFT;
-	}
+
+	if(futureY > oldPos.y && state != JUMP_LEFT && state != JUMP_RIGHT)
+	{
+		if (state == IDLE_RIGHT || state == WALK_RIGHT || state == PUNCH_RIGHT) newState = JUMP_RIGHT;
+		if (state == IDLE_LEFT || state == WALK_LEFT || state == PUNCH_LEFT) newState = JUMP_LEFT;
+	} 
+	
+	//Entity::setPosition(position + glm::vec2(0.f, velocity.y));
+	/*
 	else {
 		if (newState != JUMP_LEFT && newState != JUMP_RIGHT && velocity.y != 0.f) {
 			if (newState == IDLE_RIGHT || newState == WALK_RIGHT || newState == PUNCH_RIGHT) newState = JUMP_RIGHT;
 			if (newState == IDLE_LEFT || newState == WALK_LEFT || newState == PUNCH_LEFT) newState = JUMP_LEFT;
 		}
 	}
-	Entity::setPosition(position + glm::vec2(velocity.x, 0.f));
-	if (velocity.x < 0 && level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos)) {
-		velocity = glm::vec2(0.f, velocity.y);
-		Entity::setPosition(newPos);
-		if (newState == WALK_LEFT) newState = IDLE_LEFT;
+	*/
+
+	float futureX = oldPos.x + velocity.x;
+
+	if(velocity.x != 0.f)
+	{
+		if (velocity.x < 0.f && level->collisionMoveLeft(glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
+			futureX = newPos.x;
+			velocity = glm::vec2(0.f, velocity.y);
+			if (newState == WALK_LEFT) newState = IDLE_LEFT;
+		}
+		else if (velocity.x > 0.f && level->collisionMoveRight(glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
+			futureX = newPos.x;
+			velocity = glm::vec2(0.f, velocity.y);
+			if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
+		}
 	}
-	else if (velocity.x >= 0 && level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos)) {
-		velocity = glm::vec2(0.f, velocity.y);
-		Entity::setPosition(newPos);
-		if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
-	}
-	
+
+	Entity::setPosition(glm::vec2(futureX, futureY));	
 
 	if (newState != state) {
 		state = newState;
