@@ -31,7 +31,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sprite->addFrame(new Frame(0.f, 5.f*0.125f, 0.25f, 0.125f)); //10
 	sprite->addFrame(new Frame(0.f, 6.f*0.125f, 0.25f, 0.125f)); //11
 
-	sprite->addAnimation(new Animation({0,1}, {500.f, 500.f}));//0: Climbing
+	sprite->addAnimation(new Animation({0,1}, {250.f, 250.f}));//0: Climbing
 	sprite->addAnimation(new Animation({ 2 }, { 500.f })); // 1: Idle right
 	sprite->addAnimation(new Animation({3,2,4,2 }, { 250.f, 250.f, 250.f, 250.f })); //2: Walk right
 	sprite->addAnimation(new Animation({ 5 }, { 500.f })); // 3: Jump right
@@ -75,12 +75,13 @@ void Player::update(int deltaTime)
 		level->spawnPlayer(this);
 	}
 
-	updateMovement();
 	if (hurtTimer >= 0) {
 		hurtTimer -= deltaTime;
-		if(hurtTimer < 0) sprite->setReverseColor(false);
+		if (hurtTimer < 0) sprite->setReverseColor(false);
 	}
+	touchingVine = false;
 	updateEntityCollisions();
+	updateMovement();
 
 	Entity::update(deltaTime);
 }
@@ -126,6 +127,26 @@ void Player::updateMovement() {
 		return;
 	}
 
+	if (state == CLIMB) {
+		if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, 1.f));
+		}
+		else if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
+			Entity::setPosition(Entity::getPosition() + glm::vec2(0, -1.f));
+		}
+		if (touchingVine) {
+			if (climbableVine->getType() == VINE_TOP) {
+				Entity::setPosition(climbableVine->getPosition()+glm::vec2(0.f, -16.f));
+			}
+			else {
+				Entity::setPosition(climbableVine->getPosition() + glm::vec2(0.f, -16.f));
+			}
+			state = IDLE_RIGHT;
+			sprite->setAnimation(state);
+		}
+		return;
+	}
+
 	State newState = state;
 
 	if (Game::instance().getKey('z')) {
@@ -166,14 +187,31 @@ void Player::updateMovement() {
 	}
 
 	if (Game::instance().getSpecialKey(GLUT_KEY_UP)) {
-		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
-			velocity = glm::vec2(velocity.x, -4.0f);
+		if (touchingVine && climbableVine->getType() == VINE_BOTTOM) {
+			state = CLIMB;
+			setPosition(climbableVine->getPosition() + glm::vec2(-2.0f, -32.0f));
+			sprite->setAnimation(state);
+			return;
 		}
-		if (state == WALK_LEFT || state == PUNCH_LEFT || state == IDLE_LEFT) {
-			newState = JUMP_LEFT;
+		else {
+			if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
+				velocity = glm::vec2(velocity.x, -4.0f);
+			}
+			if (state == WALK_LEFT || state == PUNCH_LEFT || state == IDLE_LEFT) {
+				newState = JUMP_LEFT;
+			}
+			if (state == WALK_RIGHT || state == PUNCH_RIGHT || state == IDLE_RIGHT) {
+				newState = JUMP_RIGHT;
+			}
 		}
-		if (state == WALK_RIGHT || state == PUNCH_RIGHT || state == IDLE_RIGHT) {
-			newState = JUMP_RIGHT;
+	}
+
+	if (Game::instance().getSpecialKey(GLUT_KEY_DOWN)) {
+		if (touchingVine && climbableVine->getType() == VINE_TOP) {
+			state = CLIMB;
+			setPosition(climbableVine->getPosition() + glm::vec2(-2.0f, 16.0f));
+			sprite->setAnimation(state);
+			return;
 		}
 	}
 
@@ -249,7 +287,14 @@ void Player::updateEntityCollisions() {
 			}
 			else if ((*it)->getType() == SENSOR)
 			{
+				Sensor *sensor = (Sensor *)*it;
+				if (sensor->getType() == VINE_TOP || sensor->getType() == VINE_BOTTOM) {
+					touchingVine = true;
+					climbableVine = sensor;
+				}
+				if(sensor)
 				std::cerr << "Sensor!, type = " << ((Sensor *)*it)->getType() << ", code = " << ((Sensor *)*it)->getCode() << std::endl;
+				
 			}
 		}
 	}

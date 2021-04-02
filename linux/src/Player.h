@@ -4,6 +4,7 @@
 
 #include "Entity.h"
 #include "Item.h"
+#include "Sensor.h"
 
 static float flyVel = 4.f;
 
@@ -40,6 +41,8 @@ class Player : public Entity
 	int hurtTimer;
 	bool hasKey;
 	int friendCounter;
+	bool touchingVine;
+	Sensor *climbableVine;
 
 	Texture* texture;
 
