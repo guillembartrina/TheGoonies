@@ -438,47 +438,55 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
         file >> elementType;
         switch (elementType)
         {
-            case 1:
+            case 1: //Rock
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
                 addEntity(new Rock(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 2:
+            case 2: //Droplet
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
                 addEntity(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 3:
+            case 3: //Item
             {
                 int elementId, elementRoom, elementX, elementY;
                 file >> elementId >> elementRoom >> elementX >> elementY;
                 addEntity(new Item(ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 4:
+            case 4: //Door
             {
                 int elementId, elementConfig, elementRoom, elementX, elementY;
                 file >> elementId >> elementConfig >> elementRoom >> elementX >> elementY;
                 addEntity(new Door(elementConfig, ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 5:
+            case 5: //Skull
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
                 addEntity(new Skull(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
+            case 6: //Portal
+            {
+                int elementConfig, elementRoom, elementX, elementY;
+                file >> elementConfig >> elementRoom >> elementX >> elementY;
+                addEntity(new Sensor(SensorType::PORTAL, roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), tileSize, elementConfig));
+            }
+                break;
+            //Skeleton
+            //Leakage
+            //??
             default:
                 break;
         }
     }
-
-    addEntity(new Skeleton(roomRelativeToWorldCoords(roomPositions, 0, glm::ivec2(16, 6)), movingsheet, program));
 
     delete roomPositions;
 

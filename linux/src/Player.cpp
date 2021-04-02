@@ -247,6 +247,10 @@ void Player::updateEntityCollisions() {
 			} else if ((*it)->getType() == MONSTER) {
 				getHurt(10);
 			}
+			else if ((*it)->getType() == SENSOR)
+			{
+				std::cerr << "Sensor!, type = " << ((Sensor *)*it)->getType() << ", code = " << ((Sensor *)*it)->getCode() << std::endl;
+			}
 		}
 	}
 }
