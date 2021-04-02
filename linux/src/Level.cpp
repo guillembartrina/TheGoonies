@@ -30,11 +30,13 @@ Level::~Level()
     delete[] map;
 }
 
-void Level::spawnPlayer(Player* player)
+void Level::spawnPlayer(Player* player, int code)
 {
     this->player = player;
-    player->setPosition(glm::vec2(spawnPos) - tileSize*glm::vec2(0.25f, 0.2f)); //Change??
     player->spawn(this);
+
+    if(code == -1) player->setPosition(glm::vec2(spawnPos) - tileSize*glm::vec2(0.25f, 0.2f));
+    else player->setPosition(portals[code] - tileSize*glm::vec2(0.25f, 0.2f));
 }
 
 void Level::render(const glm::vec4& rect, const Program& program) const
@@ -478,6 +480,7 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 int elementConfig, elementRoom, elementX, elementY;
                 file >> elementConfig >> elementRoom >> elementX >> elementY;
                 addEntity(new Sensor(SensorType::PORTAL, roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), tileSize, elementConfig));
+                portals.push_back(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)));
             }
                 break;
             //Skeleton

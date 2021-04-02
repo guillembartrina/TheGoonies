@@ -23,10 +23,13 @@ class Player : public Entity
 
 	int getVit() const;
 	int getExp() const;
+
+	int changeLevel();
 	
 	private:
 
 	bool active;
+	int changeLevelCode;
 
 	void updateMovement();
 	void updateEntityCollisions();

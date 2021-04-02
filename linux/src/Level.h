@@ -26,7 +26,7 @@ class Level
 	Level(const std::string& path, const Program& program);
 	~Level();
 
-	void spawnPlayer(Player* player);
+	void spawnPlayer(Player* player, int code);
 
 	void render(const glm::vec4& rect, const Program& program) const;
 	void update(int deltatime);
@@ -60,6 +60,7 @@ class Level
 	Tilemap* tileMap;
 
 	glm::ivec2 cam;
+	std::vector<glm::vec2> portals;
 
 	bool load(const std::string& path, const Program& program);
 	glm::vec2 roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const;

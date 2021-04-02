@@ -11,6 +11,7 @@
 Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*glm::vec2(1.5f, 2.f))
 {
 	active = false;
+	changeLevelCode = -1;
 
 	this->velocity = glm::vec2(0.f, 0.f);
 	this->acceleration = glm::vec2(0.f, 0.2f);
@@ -72,7 +73,7 @@ void Player::update(int deltaTime)
 	}
 
 	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
-		level->spawnPlayer(this);
+		level->spawnPlayer(this, -1);
 	}
 
 	if (hurtTimer >= 0) {
@@ -341,6 +342,11 @@ int Player::getVit() const
 int Player::getExp() const
 {
 	return exp;
+}
+
+int Player::changeLevel()
+{
+	return changeLevelCode;
 }
 
 

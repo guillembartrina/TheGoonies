@@ -13,7 +13,10 @@ Scene_Game::Scene_Game()
 
 Scene_Game::~Scene_Game()
 {
-	delete level;
+	for(Level* l : levels)
+	{
+		delete l;
+	}
 	delete player;
 }
 
@@ -25,13 +28,27 @@ void Scene_Game::init()
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
 	player = new Player(program);
-	level = new Level("levels/1.txt", program);
-	level->spawnPlayer(player);
 	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player->getVit(), player->getExp());
+
+	for(int i = 1; i <= 1; i++)
+	{
+		levels.push_back(new Level("levels/" + std::to_string(i) + ".txt", program));
+	}
+
+	level = levels.front();
+	level->spawnPlayer(player, -1);
 }
 
 void Scene_Game::update(int deltaTime)
 {
+	int nlvl;
+	if((nlvl = player->changeLevel()) >= 0)
+	{
+		int lvlId = nlvl >> 32;
+		int portalId = nlvl & 0x00FF;
+		level = levels[lvlId];
+		level->spawnPlayer(player, portalId);
+	}
 	level->update(deltaTime);
 	gui->update(deltaTime, player->getVit(), player->getExp());
 }

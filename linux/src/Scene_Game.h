@@ -33,6 +33,7 @@ class Scene_Game : public IScene
 
 	Player* player;
 	Level* level;
+	std::vector<Level *> levels;
 
 	GUI* gui;
 
