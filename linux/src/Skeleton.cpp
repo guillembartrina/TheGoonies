@@ -1,39 +1,44 @@
 
-#include "Skull.h"
+#include "Skeleton.h"
 #include "Level.h"
 #include "Utils.h"
+#include "Projectile.h"
 
 #include <iostream>
 
-Skull::Skull(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
-    : Monster(position, tileSize)
+Skeleton::Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
+    : Monster(position, glm::vec2(tileSize.x, tileSize.y*2.f)), program(program)
 {
     active = false;
-    jump = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
     direction = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
 
-    Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
-    glm::vec4 texCoords = spritesheet->getTexCoords(glm::ivec2(2, 3));
+    Sprite* sprite = new Sprite(position, glm::vec2(tileSize.x, tileSize.y*2.f), spritesheet->getTexture(), program);
+
+    glm::vec4 texCoords = spritesheet->getTexCoords(glm::ivec2(9, 3), glm::ivec2(1, 2));
     sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
-    texCoords = spritesheet->getTexCoords(glm::ivec2(2, 4));
+    texCoords = spritesheet->getTexCoords(glm::ivec2(10, 3), glm::ivec2(1, 2));
     sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
-    texCoords = spritesheet->getTexCoords(glm::ivec2(3, 3));
+    texCoords = spritesheet->getTexCoords(glm::ivec2(11, 3), glm::ivec2(1, 2));
     sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
-    texCoords = spritesheet->getTexCoords(glm::ivec2(3, 4));
+    texCoords = spritesheet->getTexCoords(glm::ivec2(12, 3), glm::ivec2(1, 2));
     sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
-    sprite->addAnimation(new Animation({0, 1}, {200, 200}));
-    sprite->addAnimation(new Animation({2, 3}, {200, 200}));
+    sprite->addAnimation(new Animation({0, 1}, {250, 250}));
+    sprite->addAnimation(new Animation({2, 3}, {250, 250}));
     sprite->setAnimation((direction ? 0 : 1));
 
     Entity::setSprite(sprite);
 
     jumping = true;
     vel = 0;
+    ts = spritesheet;
+
+    sensor = new Sensor(SensorType::SKELETON, glm::vec2(0.f), glm::vec2(10.f*tileSize.x, 2.f*tileSize.y));
+    timer = 3000;
 }
 
-Skull::~Skull() {}
+Skeleton::~Skeleton() {}
 
-void Skull::spawn(Level *level)
+void Skeleton::spawn(Level *level)
 {
     Entity::spawn(level);
 
@@ -52,7 +57,7 @@ void Skull::spawn(Level *level)
     left = (min + 1) * tileSize.x;
 }
 
-void Skull::update(int deltaTime)
+void Skeleton::update(int deltaTime)
 {
     if(!active)
     {
@@ -63,7 +68,7 @@ void Skull::update(int deltaTime)
     glm::vec2 newPos = glm::vec2(0.f);
     if(direction)
     {
-        newPos.x = getPosition().x + 2.f;
+        newPos.x = getPosition().x + 1.f;
         if(newPos.x + getSize().x > right)
         {
             direction = false;
@@ -73,7 +78,7 @@ void Skull::update(int deltaTime)
     }
     else
     {
-        newPos.x = getPosition().x - 2.f;
+        newPos.x = getPosition().x - 1.f;
         if(newPos.x < left)
         {
             direction = true;
@@ -89,14 +94,7 @@ void Skull::update(int deltaTime)
         if(newPos.y + getSize().y > floor)
         {
             newPos.y = floor - getSize().y;
-            if(jump)
-            {
-                vel = -2.f;
-            }
-            else
-            {
-                jumping = false;
-            }
+            jumping = false;
         }
     }
     else
@@ -105,17 +103,34 @@ void Skull::update(int deltaTime)
     }
 
     setPosition(newPos);
+
+    if(direction)
+    {
+        sensor->setPosition(getPosition());
+    }
+    else
+    {
+        sensor->setPosition(getPosition() + glm::vec2(-10.f*tileSize.x, 0.f));
+    }
+
+    if(timer > 0) timer -= deltaTime;
+    if(timer <= 0 && Entity::areColliding(sensor, level->getPlayer()))
+    {
+        level->addEntity(new Projectile(getPosition() + glm::vec2(0.f, tileSize.y*0.5f), glm::vec2((direction ? 1.f : -1.f), 0.f), ts, program));
+        timer = 3000;
+    }
+
     Entity::update(deltaTime);
 
 }
 
-void Skull::render(const Program &program)
+void Skeleton::render(const Program &program)
 {
     if(!active) return;
     Entity::render(program);
 }
 
-void Skull::kill()
+void Skeleton::kill()
 {
     setDestroy(); // play animation
 }

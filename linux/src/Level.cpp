@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Door.h"
 #include "Skull.h"
+#include "Skeleton.h"
 
 #include <iostream>
 #include <fstream>
@@ -76,7 +77,6 @@ void Level::update(int deltatime)
 	for(auto it = entities.begin(); it != entities.end(); )
     {
 		(*it)->update(deltatime);
-
         if((*it)->toDestroy()) it = entities.erase(it);
         else it++;
 	}
@@ -477,6 +477,8 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 break;
         }
     }
+
+    addEntity(new Skeleton(roomRelativeToWorldCoords(roomPositions, 0, glm::ivec2(16, 6)), movingsheet, program));
 
     delete roomPositions;
 

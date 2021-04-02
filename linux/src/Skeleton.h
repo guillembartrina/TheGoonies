@@ -1,16 +1,17 @@
-#ifndef _SKULL_INCLUDE
-#define _SKULL_INCLUDE
+#ifndef _SKELETON_INCLUDE
+#define _SKELETON_INCLUDE
 
 #include "Monster.h"
 #include "Tilesheet.h"
+#include "Sensor.h"
 
-class Skull : public Monster
+class Skeleton : public Monster
 {
 
 	public:
 
-	Skull(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program);
-	~Skull();
+	Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program);
+	~Skeleton();
 	void spawn(Level *level) override;
 	void update(int deltaTime) override;
 	void render(const Program &program) override;
@@ -19,7 +20,6 @@ class Skull : public Monster
 	private:
 
 	bool active;
-	bool jump;
 	bool direction;
 
 	bool jumping;
@@ -28,6 +28,13 @@ class Skull : public Monster
 
 	float floor;
 	float left, right;
+
+	Sensor* sensor;
+
+	Tilesheet* ts;
+	const Program& program;
+
+	int timer;
 };
 
 
