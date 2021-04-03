@@ -32,7 +32,7 @@ class GUI
     Quad* background, * maxVitBar, * vitBar, * expMaxBar, * expBar;
 	Player *player;
 	Texture *texture;
-	Sprite * powerupFrames;
+	Sprite * powerupFrames, * friendSprite;
 };
 
 #endif // _GUI_INCLUDE

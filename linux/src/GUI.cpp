@@ -26,6 +26,10 @@ GUI::GUI(const glm::mat4& projection, const glm::vec4& rect, Player *player, Pro
 		powerupFrames->addFrame(new Frame(i*.125f, 0.f, .125f, 1.f));
 	}
 
+	friendSprite = new Sprite(glm::vec2(900.f, 17.f), glm::vec2(60.f, 60.f), texture, programTexture);
+	friendSprite->addFrame(new Frame(6.f*.125f, 0.f, .0625f, .5f));
+	friendSprite->setFrame(0);
+
     if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
     background = new Quad(glm::vec2(rect.x, rect.w), glm::vec2(rect.y-rect.x, rect.z-rect.w), glm::vec4(0.f, 0.f, 0.f, 1.f), program);
 	maxVitBar = new Quad(glm::vec2(50.f, 15.f), glm::vec2(270.f, 34.f), glm::vec4(1.f, 1.f, 1.f, 1.f), program);
@@ -61,10 +65,13 @@ void GUI::render(Program &programTexture)
 	vitBar->render(program);
     text.render("VIT", glm::vec2(10.f, 40.f), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
 	for (int i = 0; i < player->getPowerups().size(); ++i) {
-		if (player->getPowerups()[i] > 0) {
+		if (player->getPowerups()[i] != 0) {
 			powerupFrames->setPosition(glm::vec2(450.f + i*70.f, 17.f));
 			powerupFrames->setFrame(i);
 			powerupFrames->render(programTexture);
 		}
 	}
+	friendSprite->render(programTexture);
+	text.render(std::to_string(player->getFriendCounter()) + "/6", glm::vec2(970.f ,68.f), 48, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
+	
 }

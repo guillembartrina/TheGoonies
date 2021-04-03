@@ -24,6 +24,7 @@ class Player : public Entity
 
 	int getVit() const;
 	int getExp() const;
+	int getFriendCounter() const;
 	std::vector<int> getPowerups() const;
 	int changeLevel();
 	

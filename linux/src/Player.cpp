@@ -352,6 +352,10 @@ std::vector<int> Player::getPowerups() const {
 	return powerups;
 }
 
+int Player::getFriendCounter() const {
+	return friendCounter;
+}
+
 int Player::changeLevel()
 {
 	return changeLevelCode;
