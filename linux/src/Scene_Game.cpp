@@ -28,7 +28,7 @@ void Scene_Game::init()
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
 
 	player = new Player(program);
-	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player->getVit(), player->getExp());
+	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player, program);
 
 	for(int i = 1; i <= 1; i++)
 	{
@@ -50,7 +50,7 @@ void Scene_Game::update(int deltaTime)
 		level->spawnPlayer(player, portalId);
 	}
 	level->update(deltaTime);
-	gui->update(deltaTime, player->getVit(), player->getExp());
+	gui->update(deltaTime);
 }
 
 void Scene_Game::render()
@@ -63,7 +63,7 @@ void Scene_Game::render()
 	program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
-	gui->render();
+	gui->render(program);
 }
 
 void Scene_Game::initShaders()

@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Item.h"
 #include "Sensor.h"
+#include <vector>
 
 static float flyVel = 4.f;
 
@@ -23,7 +24,7 @@ class Player : public Entity
 
 	int getVit() const;
 	int getExp() const;
-
+	std::vector<int> getPowerups() const;
 	int changeLevel();
 	
 	private:
@@ -45,6 +46,7 @@ class Player : public Entity
 	bool hasKey;
 	int friendCounter;
 	bool touchingVine;
+	std::vector<int> powerups;
 	Sensor *climbableVine;
 
 	Texture* texture;

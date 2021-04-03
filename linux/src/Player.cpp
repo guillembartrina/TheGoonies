@@ -20,6 +20,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	this->hurtTimer = -1;
 	this->hasKey = false;
 	this->friendCounter = 0;
+	powerups = std::vector<int>(POW_HYPERSHOES - BAG, 0);
 
 	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
 	Sprite* sprite = new Sprite(glm::vec2(0.f), tileSize*2.f, texture, program);
@@ -312,8 +313,11 @@ void Player::handleEntityCollisionItem(Entity *it) {
 		vit = (vit + 20) > 50 ? 50 : vit + 20;
 		item->setDestroy();
 	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
-		
-		item->setDestroy();
+		int powerUpCode = item->getCode() - POW_YELLOWHELMET;
+		if (powerups[powerUpCode] == 0) {
+			item->setDestroy();
+			powerups[powerUpCode] = item->getCode() == POW_HYPERSHOES ? -1 : 2;
+		}
 	} else if (item->getCode() == FRIEND) {
 		item->setDestroy();
 		++friendCounter;
@@ -342,6 +346,10 @@ int Player::getVit() const
 int Player::getExp() const
 {
 	return exp;
+}
+
+std::vector<int> Player::getPowerups() const {
+	return powerups;
 }
 
 int Player::changeLevel()

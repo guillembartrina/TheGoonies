@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <glm/gtc/matrix_transform.hpp>
 
 #include "Program.h"
 #include "Texture.h"
@@ -16,11 +17,11 @@ class GUI
 
 	public:
 
-	GUI(const glm::mat4& projection, const glm::vec4& rect, int vit, int exp);
+	GUI(const glm::mat4& projection, const glm::vec4& rect, Player *player, Program &programTexture);
 	~GUI();
 
-	void update(int deltatime, int vit, int exp);
-	void render();
+	void update(int deltatime);
+	void render(Program &programTexture);
 
 	private:
 
@@ -28,10 +29,10 @@ class GUI
 	glm::mat4 projection;
 
 	Text text;
-    Quad* background;
-	int vit;
-	int exp;
-
+    Quad* background, * maxVitBar, * vitBar, * expMaxBar, * expBar;
+	Player *player;
+	Texture *texture;
+	Sprite * powerupFrames;
 };
 
 #endif // _GUI_INCLUDE
