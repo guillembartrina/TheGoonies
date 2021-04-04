@@ -25,7 +25,7 @@ class Scene_Options : public IScene
 
 	private:
 
-	Text text;
+	Text textBold, text;
 
 };
 

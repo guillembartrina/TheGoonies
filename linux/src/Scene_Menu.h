@@ -6,7 +6,6 @@
 
 #include "IScene.h"
 #include "Program.h"
-#include "Texture.h"
 #include "Level.h"
 #include "Text.h"
 #include "Sprite.h"
@@ -31,8 +30,9 @@ class Scene_Menu : public IScene
 	Text text;
 
 	Program program;
+	
 	Texture texture;
-	Sprite* sprite;
+	Sprite* background;
 
 };
 

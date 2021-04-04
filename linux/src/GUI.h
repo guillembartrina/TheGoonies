@@ -28,6 +28,8 @@ class GUI
 	Program program;
 	glm::mat4 projection;
 
+	int oldVit;
+
 	Text text;
     Quad* background, * maxVitBar, * vitBar, * expMaxBar, * expBar;
 	Player *player;

@@ -34,6 +34,8 @@ GUI::GUI(const glm::mat4& projection, const glm::vec4& rect, Player *player, Pro
     background = new Quad(glm::vec2(rect.x, rect.w), glm::vec2(rect.y-rect.x, rect.z-rect.w), glm::vec4(0.f, 0.f, 0.f, 1.f), program);
 	maxVitBar = new Quad(glm::vec2(50.f, 15.f), glm::vec2(270.f, 34.f), glm::vec4(1.f, 1.f, 1.f, 1.f), program);
 	vitBar = new Quad(glm::vec2(60.f, 17.f), glm::vec2(250.f, 30.f), glm::vec4(0.f, .5f, 0.f, 1.f), program);
+
+	oldVit = -1;
 	
 }
 
@@ -44,8 +46,13 @@ GUI::~GUI()
 
 void GUI::update(int deltatime)
 {
-	vitBar = new Quad(glm::vec2(60.f, 17.f), glm::vec2((player->getVit()/50.f)*250.f, 30.f), glm::vec4(0.f, 1.f, 0.f, 1.f), program);
-	
+	int newVit = player->getVit();
+	if(newVit != oldVit)
+	{
+		oldVit = newVit;
+		delete vitBar;
+		vitBar = new Quad(glm::vec2(60.f, 17.f), glm::vec2((player->getVit()/50.f)*250.f, 30.f), glm::vec4(0.f, 1.f, 0.f, 1.f), program);
+	}
 }
 
 void GUI::render(Program &programTexture)

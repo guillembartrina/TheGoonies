@@ -11,7 +11,9 @@
 Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.f, 0.f), tileSize*glm::vec2(1.5f, 2.f))
 {
 	active = false;
-	changeLevelCode = -1;
+	change = -1;
+	dead = false;
+	won = false;
 
 	this->velocity = glm::vec2(0.f, 0.f);
 	this->acceleration = glm::vec2(0.f, 0.2f);
@@ -79,6 +81,24 @@ void Player::update(int deltaTime)
 
 	if (hurtTimer >= 0) {
 		hurtTimer -= deltaTime;
+		if(hurtSubtimer >= 0)
+		{
+			hurtSubtimer -= deltaTime;
+			if(hurtSubtimer < 0)
+			{
+				hurtSubtimer = -200;
+				sprite->setReverseColor(false);
+			}
+		}
+		else
+		{
+			hurtSubtimer += deltaTime;
+			if(hurtSubtimer > 0)
+			{
+				hurtSubtimer = 200;
+				sprite->setReverseColor(true);
+			}
+		}
 		if (hurtTimer < 0) sprite->setReverseColor(false);
 	}
 	touchingVine = false;
@@ -328,7 +348,9 @@ void Player::getHurt(int damage) {
 	if (hurtTimer < 0) {
 		vit -= damage;
 		hurtTimer = 1000;
+		hurtSubtimer = 200;
 		sprite->setReverseColor(true);
+		if(vit <= 0) dead = true;
 	}
 }
 
@@ -358,7 +380,17 @@ int Player::getFriendCounter() const {
 
 int Player::changeLevel()
 {
-	return changeLevelCode;
+	return change;
+}
+
+bool Player::isDead() const
+{
+	return dead;
+}
+
+bool Player::hasWon() const
+{
+	return won;
 }
 
 

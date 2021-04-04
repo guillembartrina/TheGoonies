@@ -17,13 +17,12 @@ Scene_Menu::Scene_Menu()
 
 Scene_Menu::~Scene_Menu()
 {
-	delete sprite;
 }
 
 
 void Scene_Menu::init()
 {
-	if(!text.init("fonts/OpenSans-Regular.ttf")) std::cerr << "Could not load font!!!" << std::endl;
+	if(!text.init("fonts/OpenSans-Bold.ttf")) std::cerr << "Could not load font!!!" << std::endl;
 
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
@@ -38,22 +37,13 @@ void Scene_Menu::init()
 	program.attachShader(frag);
 	program.link();
 
-	texture.loadFromFile("images/rocks.jpg", PixelFormat::TEXTURE_PIXEL_FORMAT_RGB);
-	sprite = new Sprite(glm::vec2(400, 400), glm::vec2(100, 100), &texture, program);
-
-	sprite->addFrame(new Frame(0.f, 0.f, 0.25f, 0.25f));
-	sprite->addFrame(new Frame(0.25f, 0.f, 0.25f, 0.25f));
-	sprite->addFrame(new Frame(0.f, 0.25f, 0.25f, 0.25f));
-	sprite->addFrame(new Frame(0.25f, 0.25f, 0.25f, 0.25f));
-
-	sprite->addAnimation(new Animation({0, 1, 2, 3}, {1000.f, 1000.f, 1000.f, 1000.f}));
-
-	sprite->setAnimation(0);
+	texture.loadFromFile("images/menu.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
+	background = new Sprite(glm::vec2(0.f), glm::vec2(windowX, windowY), &texture, program);
 }
 
 void Scene_Menu::update(int deltaTime)
 {
-	sprite->update(deltaTime);
+	background->update(deltaTime);
 	if(Game::instance().getKey('p'))
 	{
 		Game::instance().changeScene(new Scene_Game());
@@ -66,36 +56,18 @@ void Scene_Menu::update(int deltaTime)
 	{
 		Game::instance().changeScene(new Scene_Credits());
 	}
-
-	if(Game::instance().getKey('d'))
-	{
-		sprite->setPosition(sprite->getPosition() + glm::vec2(10, 0));
-	}
-	if(Game::instance().getKey('a'))
-	{
-		sprite->setPosition(sprite->getPosition() + glm::vec2(-10, 0));
-	}
-	if(Game::instance().getKey('w'))
-	{
-		sprite->setPosition(sprite->getPosition() + glm::vec2(0, -10));
-	}
-	if(Game::instance().getKey('s'))
-	{
-		sprite->setPosition(sprite->getPosition() + glm::vec2(0, 10));
-	}
 }
 
 void Scene_Menu::render()
 {
-	text.render("MENU", glm::vec2(50, 70), 60, glm::vec4(1, 1, 1, 1));
-	text.render("Press P to play", glm::vec2(50, 200), 30, glm::vec4(1, 1, 1, 1));
-	text.render("Press O to options", glm::vec2(50, 240), 30, glm::vec4(1, 1, 1, 1));
-	text.render("Press C to credits", glm::vec2(50, 280), 30, glm::vec4(1, 1, 1, 1));
 	program.setUniformValue(program.getUniformLocation("projection"), projection);
 	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0));
 	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
 	program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
-	sprite->render(program);
+	background->render(program);
+	text.render("Press P to play", glm::vec2(710, 600), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Press O to options", glm::vec2(685, 700), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Press C to credits", glm::vec2(695, 800), 30, glm::vec4(1, 1, 1, 1));
 }
 
 

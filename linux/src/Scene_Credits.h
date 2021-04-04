@@ -25,7 +25,7 @@ class Scene_Credits : public IScene
 
 	private:
 
-	Text text;
+	Text textBold, text;
 
 };
 

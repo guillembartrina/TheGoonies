@@ -26,12 +26,18 @@ class Player : public Entity
 	int getExp() const;
 	int getFriendCounter() const;
 	std::vector<int> getPowerups() const;
+
 	int changeLevel();
+	bool isDead() const;
+	bool hasWon() const;
 	
 	private:
 
 	bool active;
-	int changeLevelCode;
+
+	int change;
+	bool dead;
+	bool won;
 
 	void updateMovement();
 	void updateEntityCollisions();
@@ -44,6 +50,7 @@ class Player : public Entity
 	glm::vec2 velocity;
 	glm::vec2 acceleration;
 	int hurtTimer;
+	int hurtSubtimer;
 	bool hasKey;
 	int friendCounter;
 	bool touchingVine;
@@ -53,10 +60,6 @@ class Player : public Entity
 	Texture* texture;
 
 	bool fly;
-
-	// Power up si/no i usos restants
-	// Clau/No clau
-	// Amics rescatats (identificats per ENUM o el que sigui)
 
 };
 

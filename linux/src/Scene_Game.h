@@ -37,6 +37,11 @@ class Scene_Game : public IScene
 
 	GUI* gui;
 
+	bool gameover;
+	bool won;
+	int timer;
+	Text text;
+
 };
 
 

@@ -4,11 +4,14 @@
 
 #include <iostream>
 #include <cmath>
+#include "Scene_Menu.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
 Scene_Game::Scene_Game()
 {
+	gameover = false;
+	won = false;
 }
 
 Scene_Game::~Scene_Game()
@@ -23,6 +26,8 @@ Scene_Game::~Scene_Game()
 
 void Scene_Game::init()
 {
+	if(!text.init("fonts/OpenSans-ExtraBold.ttf")) std::cerr << "Could not load font!!!" << std::endl;
+
 	initShaders();
 	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
 	projection = glm::ortho(0.f, (windowX - 1), (windowY - 1), 0.f);
@@ -41,29 +46,62 @@ void Scene_Game::init()
 
 void Scene_Game::update(int deltaTime)
 {
-	int nlvl;
-	if((nlvl = player->changeLevel()) >= 0)
+	if(gameover || won)
 	{
-		int lvlId = nlvl >> 32;
-		int portalId = nlvl & 0x00FF;
-		level = levels[lvlId];
-		level->spawnPlayer(player, portalId);
+		timer -= deltaTime;
+		if(timer < 0)
+		{
+			Game::instance().changeScene(new Scene_Menu());
+		}
 	}
-	level->update(deltaTime);
-	gui->update(deltaTime);
+	else
+	{
+
+		int nlvl;
+		if((nlvl = player->changeLevel()) >= 0)
+		{
+			int lvlId = nlvl >> 32;
+			int portalId = nlvl & 0x00FF;
+			level = levels[lvlId];
+			level->spawnPlayer(player, portalId);
+		}
+		if(player->hasWon())
+		{
+			timer = 3000;
+			won = true;
+		}
+		if(player->isDead())
+		{
+			timer = 3000;
+			gameover = true;
+		}
+		level->update(deltaTime);
+		gui->update(deltaTime);
+	}
 }
 
 void Scene_Game::render()
 {
-	program.use();
-	program.setUniformValue(program.getUniformLocation("projection"), projection);
-	program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0f));
-	program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
-	program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
-	program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
-	float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
-	level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
-	gui->render(program);
+	if(gameover)
+	{
+		text.render("> GAME OVER <", glm::vec2(400, 500), 100, glm::vec4(1, 0, 0, 1));
+	}
+	else if(won)
+	{
+		text.render("YOU HAVE WON!", glm::vec2(400, 500), 100, glm::vec4(0, 1, 0, 1));
+	}
+	else
+	{
+		program.use();
+		program.setUniformValue(program.getUniformLocation("projection"), projection);
+		program.setUniformValue(program.getUniformLocation("camview"), glm::mat4(1.0f));
+		program.setUniformValue(program.getUniformLocation("modelview"), glm::mat4(1.0f));
+		program.setUniformValue(program.getUniformLocation("customTexCoord"), 0);
+		program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
+		float windowX = Game::instance().getWindowWidth(), windowY = Game::instance().getWindowHeight();
+		level->render(glm::vec4(0.f, (windowX - 1), (windowY - 1), 100.f), program);
+		gui->render(program);
+	}
 }
 
 void Scene_Game::initShaders()
