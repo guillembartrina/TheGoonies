@@ -45,7 +45,7 @@ void Scene_Game::init()
 	level->spawnPlayer(player, -1);
 
 	music = Game::instance().getEngine()->play2D("musics/loop.ogg", true, false, true);
-	music->setVolume(0.4f);
+	music->setVolume(0.1f);
 }
 
 void Scene_Game::update(int deltaTime)

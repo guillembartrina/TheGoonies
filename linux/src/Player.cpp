@@ -52,7 +52,17 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	fly = false;
 
 	sound_jump = Game::instance().getEngine()->addSoundSourceFromFile("sounds/jump.wav");
-	sound_jump->setDefaultVolume(0.2f);
+	sound_jump->setDefaultVolume(0.3f);
+	sound_damage = Game::instance().getEngine()->addSoundSourceFromFile("sounds/damage.wav");
+	sound_damage->setDefaultVolume(0.3f);
+	sound_rescue = Game::instance().getEngine()->addSoundSourceFromFile("sounds/rescue.ogg");
+	sound_rescue->setDefaultVolume(0.3f);
+	sound_pickup = Game::instance().getEngine()->addSoundSourceFromFile("sounds/item.mp3");
+	sound_pickup->setDefaultVolume(0.3f);
+	sound_kill = Game::instance().getEngine()->addSoundSourceFromFile("sounds/kill.mp3");
+	sound_kill->setDefaultVolume(0.3f);
+	sound_portal = Game::instance().getEngine()->addSoundSourceFromFile("sounds/portal.mp3");
+	sound_portal->setDefaultVolume(0.3f);
 }
 
 Player::~Player()
@@ -329,17 +339,21 @@ void Player::handleEntityCollisionItem(Entity *it) {
 		if (!hasKey) {
 			item->setDestroy();
 			hasKey = true;
+			Game::instance().getEngine()->play2D(sound_pickup);
 		}
 	} else if (item->getCode() == POTION) {
 		vit = (vit + 20) > 50 ? 50 : vit + 20;
 		item->setDestroy();
+		Game::instance().getEngine()->play2D(sound_pickup);
 	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
 		int powerUpCode = item->getCode() - POW_YELLOWHELMET;
 		if (powerups[powerUpCode] == 0) {
 			item->setDestroy();
 			powerups[powerUpCode] = item->getCode() == POW_HYPERSHOES ? -1 : 2;
+			Game::instance().getEngine()->play2D(sound_pickup);
 		}
 	} else if (item->getCode() == FRIEND) {
+		Game::instance().getEngine()->play2D(sound_rescue);
 		item->setDestroy();
 		++friendCounter;
 	}
@@ -347,6 +361,7 @@ void Player::handleEntityCollisionItem(Entity *it) {
 
 void Player::getHurt(int damage) {
 	if (hurtTimer < 0) {
+		Game::instance().getEngine()->play2D(sound_damage);
 		vit -= damage;
 		hurtTimer = 1000;
 		hurtSubtimer = 200;

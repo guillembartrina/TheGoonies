@@ -1,6 +1,9 @@
 
 #include "Door.h"
 #include "Level.h"
+#include "Game.h"
+
+irrklang::ISoundSource* Door::sound_unlock = Game::instance().getEngine()->addSoundSourceFromFile("sounds/door.mp3");
 
 Door::Door(int unlocks, ItemCode item, const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
     : Entity(EntityType::DOOR, position, tileSize*3.f), program(program)
@@ -20,6 +23,8 @@ Door::Door(int unlocks, ItemCode item, const glm::vec2 &position, Tilesheet* spr
     texCoords = spritesheet->getTexCoords(glm::ivec2(1, 3));
     lock->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
     lock->setFrame(0);
+
+	sound_unlock->setDefaultVolume(0.4f);
 }
 
 void Door::update(int deltaTime)
@@ -40,6 +45,7 @@ void Door::render(const Program &program)
 void Door::unlock()
 {
     unlocks--;
+    Game::instance().getEngine()->play2D(sound_unlock);
     if(unlocks == 0)
     {
         level->addEntity(new Item(item, getPosition() + tileSize, ts, program));

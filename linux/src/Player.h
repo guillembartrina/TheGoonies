@@ -62,7 +62,7 @@ class Player : public Entity
 
 	bool fly;
 
-	irrklang::ISoundSource* sound_jump;
+	irrklang::ISoundSource* sound_jump, *sound_damage, *sound_rescue, *sound_pickup, *sound_kill, *sound_portal;
 
 };
 

@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "Tilesheet.h"
 #include "Item.h"
+#include "irr/irrKlang.h"
 
 static int doorDestroying = 2000;
 
@@ -26,6 +27,8 @@ class Door : public Entity
 	Tilesheet* ts;
 	const Program& program;
 	Sprite* lock;
+
+	static irrklang::ISoundSource* sound_unlock;
 };
 
 #endif // _ROCK_INCLUDE

@@ -14,6 +14,8 @@ Game::Game()
 
 Game::~Game()
 {
+	engine->stopAllSounds();
+	engine->removeAllSoundSources();
 	engine->drop();
 }
 
