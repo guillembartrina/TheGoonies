@@ -21,6 +21,7 @@ Scene_Game::~Scene_Game()
 		delete l;
 	}
 	delete player;
+	music->drop();
 }
 
 
@@ -42,6 +43,9 @@ void Scene_Game::init()
 
 	level = levels.front();
 	level->spawnPlayer(player, -1);
+
+	music = Game::instance().getEngine()->play2D("musics/loop.ogg", true, false, true);
+	music->setVolume(0.4f);
 }
 
 void Scene_Game::update(int deltaTime)
@@ -72,8 +76,10 @@ void Scene_Game::update(int deltaTime)
 		}
 		if(player->isDead())
 		{
-			timer = 3000;
+			timer = 5000;
 			gameover = true;
+			music->stop();
+			Game::instance().getEngine()->play2D("sounds/gameover.ogg");
 		}
 		level->update(deltaTime);
 		gui->update(deltaTime);

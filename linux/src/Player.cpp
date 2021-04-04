@@ -50,6 +50,9 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	
 	state = IDLE_RIGHT;
 	fly = false;
+
+	sound_jump = Game::instance().getEngine()->addSoundSourceFromFile("sounds/jump.wav");
+	sound_jump->setDefaultVolume(0.2f);
 }
 
 Player::~Player()
@@ -218,6 +221,7 @@ void Player::updateMovement() {
 		else {
 			if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
 				velocity = glm::vec2(velocity.x, -4.0f);
+				Game::instance().getEngine()->play2D(sound_jump);
 			}
 			if (state == WALK_LEFT || state == PUNCH_LEFT || state == IDLE_LEFT) {
 				newState = JUMP_LEFT;
@@ -314,9 +318,6 @@ void Player::updateEntityCollisions() {
 					touchingVine = true;
 					climbableVine = sensor;
 				}
-				if(sensor)
-				std::cerr << "Sensor!, type = " << ((Sensor *)*it)->getType() << ", code = " << ((Sensor *)*it)->getCode() << std::endl;
-				
 			}
 		}
 	}

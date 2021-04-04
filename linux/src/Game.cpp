@@ -8,6 +8,13 @@ Game::Game()
 	windowWidth = windowHeight = 0;
 	scene = nullptr;
 	newScene = nullptr;
+
+	engine = irrklang::createIrrKlangDevice();
+}
+
+Game::~Game()
+{
+	engine->drop();
 }
 
 void Game::init(int windowWidth, int windowHeight, IScene* scene)
@@ -24,6 +31,7 @@ bool Game::update(int deltaTime)
 {
 	if(newScene != nullptr)
 	{
+		engine->stopAllSounds();
 		delete scene;
 		scene = newScene;
 		newScene = nullptr;
@@ -96,6 +104,11 @@ int Game::getWindowHeight() const
 void Game::changeScene(IScene* scene)
 {
 	this->newScene = scene;
+}
+
+irrklang::ISoundEngine* Game::getEngine()
+{
+	return engine;
 }
 
 

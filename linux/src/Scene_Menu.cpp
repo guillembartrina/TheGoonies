@@ -39,6 +39,8 @@ void Scene_Menu::init()
 
 	texture.loadFromFile("images/menu.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
 	background = new Sprite(glm::vec2(0.f), glm::vec2(windowX, windowY), &texture, program);
+
+	Game::instance().getEngine()->play2D("musics/title.ogg", true);
 }
 
 void Scene_Menu::update(int deltaTime)

@@ -46,6 +46,8 @@ class Level
 
 	void addEntity(Entity* entity);
 
+	bool timeStopper() const;
+
 	private:
 
 	std::string name;

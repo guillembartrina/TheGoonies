@@ -6,6 +6,7 @@
 #include "Item.h"
 #include "Sensor.h"
 #include <vector>
+#include "irr/irrKlang.h"
 
 static float flyVel = 4.f;
 
@@ -60,6 +61,8 @@ class Player : public Entity
 	Texture* texture;
 
 	bool fly;
+
+	irrklang::ISoundSource* sound_jump;
 
 };
 

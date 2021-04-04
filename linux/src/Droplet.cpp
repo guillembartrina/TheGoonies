@@ -12,6 +12,7 @@ Droplet::Droplet(const glm::vec2 &position, Tilesheet* spritesheet, const Progra
     ini = position;
     timer = dropletWaiting;
     state = DROPLET_WAITING;
+    type = EntityType::NONE;
 
     Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
 
@@ -50,6 +51,7 @@ void Droplet::update(int deltaTime)
                 sprite->setAnimation(0);
                 state = DROPLET_LOADING;
                 timer = dropletLoading;
+                type = EntityType::OBSTACLE;
             }
             break;
         case DROPLET_LOADING:
@@ -82,6 +84,7 @@ void Droplet::update(int deltaTime)
             if(timer < 0)
             {
                 state = DROPLET_WAITING;
+                type = EntityType::NONE;
                 timer = dropletWaiting;
                 setPosition(ini);
             }

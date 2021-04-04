@@ -13,7 +13,7 @@ OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(BUILD_DIR)/%.o,$(SRC_FILES))
 
 LIBS_DIRS := $(wildcard $(LIBS_DIR)/*)
 LIBS := $(foreach dir,$(LIBS_DIRS),-L$(dir) $(foreach file,$(patsubst lib%,%,$(basename $(notdir $(wildcard $(dir)/lib*.a)))),-l$(file)))
-EXTERNAL_LIBS := -lGL -lGLEW -lglut -lfreetype
+EXTERNAL_LIBS := -lGL -lGLEW -lglut -lfreetype -lIrrKlang
 
 $(TARJET): $(OBJ_FILES)
 	$(CC) $^ -o $@ $(LIBS) $(EXTERNAL_LIBS)

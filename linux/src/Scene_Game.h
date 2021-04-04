@@ -10,6 +10,7 @@
 #include "Level.h"
 #include "Text.h"
 #include "GUI.h"
+#include "irr/irrKlang.h"
 
 
 class Scene_Game : public IScene
@@ -42,6 +43,7 @@ class Scene_Game : public IScene
 	int timer;
 	Text text;
 
+	irrklang::ISound* music;
 };
 
 

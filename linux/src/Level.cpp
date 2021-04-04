@@ -507,3 +507,8 @@ void Level::addEntity(Entity* entity)
     entity->spawn(this);
     entities.push_back(entity);
 }
+
+bool Level::timeStopper() const
+{
+    return false;
+}

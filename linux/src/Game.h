@@ -2,12 +2,14 @@
 #define _GAME_INCLUDE
 
 #include "IScene.h"
+#include "irr/irrKlang.h"
 
 class Game
 {
 	public:
 
 	Game();
+	~Game();
 
 	static Game &instance()
 	{
@@ -35,6 +37,8 @@ class Game
 
 	void changeScene(IScene* scene);
 
+	irrklang::ISoundEngine* getEngine();
+
 	private:
 
 	int windowWidth, windowHeight;
@@ -43,6 +47,8 @@ class Game
 	bool keys[256], specialKeys[256];
 
 	IScene* scene, * newScene;
+
+	irrklang::ISoundEngine* engine;
 
 };
 
