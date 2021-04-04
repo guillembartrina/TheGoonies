@@ -28,6 +28,8 @@ class Skull : public Monster
 
 	float floor;
 	float left, right;
+
+	int destroying;
 };
 
 

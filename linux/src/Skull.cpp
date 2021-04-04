@@ -25,10 +25,14 @@ Skull::Skull(const glm::vec2 &position, Tilesheet* spritesheet, const Program& p
     sprite->addAnimation(new Animation({2, 3}, {200, 200}));
     sprite->setAnimation((direction ? 0 : 1));
 
+    texCoords = spritesheet->getTexCoords(glm::ivec2(9, 5));
+    sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+
     Entity::setSprite(sprite);
 
     jumping = true;
     vel = 0;
+    destroying = -1;
 }
 
 Skull::~Skull() {}
@@ -54,6 +58,13 @@ void Skull::spawn(Level *level)
 
 void Skull::update(int deltaTime)
 {
+    if(destroying >= 0)
+    {
+        destroying -= deltaTime;
+        if(destroying < 0) setDestroy();
+        return;
+    }
+
     if(!active)
     {
         if(level->inScreen(getPosition())) active = true;
@@ -117,5 +128,6 @@ void Skull::render(const Program &program)
 
 void Skull::kill()
 {
-    setDestroy(); // play animation
+    destroying = 1000;
+    sprite->setFrame(4);
 }

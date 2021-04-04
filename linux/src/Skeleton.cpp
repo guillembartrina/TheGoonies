@@ -26,6 +26,9 @@ Skeleton::Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Prog
     sprite->addAnimation(new Animation({2, 3}, {250, 250}));
     sprite->setAnimation((direction ? 0 : 1));
 
+    texCoords = spritesheet->getTexCoords(glm::ivec2(13, 3));
+    sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
+
     Entity::setSprite(sprite);
 
     jumping = true;
@@ -34,6 +37,8 @@ Skeleton::Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Prog
 
     sensor = new Sensor(SensorType::SKELETON, glm::vec2(0.f), glm::vec2(10.f*tileSize.x, 2.f*tileSize.y));
     timer = 3000;
+
+    destroying = -1;
 }
 
 Skeleton::~Skeleton() {}
@@ -59,6 +64,13 @@ void Skeleton::spawn(Level *level)
 
 void Skeleton::update(int deltaTime)
 {
+    if(destroying >= 0)
+    {
+        destroying -= deltaTime;
+        if(destroying < 0) setDestroy();
+        return;
+    }
+
     if(!active)
     {
         if(level->inScreen(getPosition())) active = true;
@@ -132,5 +144,6 @@ void Skeleton::render(const Program &program)
 
 void Skeleton::kill()
 {
-    setDestroy(); // play animation
+    destroying = 1000;
+    sprite->setFrame(4);
 }

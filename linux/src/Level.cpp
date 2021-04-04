@@ -16,6 +16,7 @@ Level::Level(const std::string& path, const Program& program)
 {
     cam = glm::ivec2(2, 0);
     if(!load(path, program)) std::cerr << "Error reading level file!" << std::endl;
+    stopTimer = -1;
 }
 
 Level::~Level()
@@ -76,12 +77,19 @@ void Level::update(int deltatime)
         if(cam != glm::ivec2(playerX, playerY)) cam = glm::ivec2(playerX, playerY);
     }
 
-	for(auto it = entities.begin(); it != entities.end(); )
+    if(stopTimer >= 0)
     {
-		(*it)->update(deltatime);
-        if((*it)->toDestroy()) it = entities.erase(it);
-        else it++;
-	}
+        stopTimer -= deltatime;
+    }
+    else
+    {
+        for(auto it = entities.begin(); it != entities.end(); )
+        {
+            (*it)->update(deltatime);
+            if((*it)->toDestroy()) it = entities.erase(it);
+            else it++;
+        }
+    }
 	if(player) player->update(deltatime);
 }
 
@@ -508,7 +516,12 @@ void Level::addEntity(Entity* entity)
     entities.push_back(entity);
 }
 
-bool Level::timeStopper() const
+void Level::stopTime()
 {
-    return false;
+    stopTimer = stoppingTime;
+}
+
+bool Level::isTimeStopped() const
+{
+    return (stopTimer >= 0);
 }

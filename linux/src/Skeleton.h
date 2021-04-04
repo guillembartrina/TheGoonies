@@ -35,6 +35,7 @@ class Skeleton : public Monster
 	const Program& program;
 
 	int timer;
+	int destroying;
 };
 
 

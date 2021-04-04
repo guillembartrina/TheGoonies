@@ -15,6 +15,8 @@ static glm::ivec2 roomSize = glm::ivec2(32, 20);
 static glm::vec2 tileSize = glm::vec2(16.f, 16.f);
 static glm::vec2 floorOffset = glm::vec2(0.f, -2.f);
 
+static int stoppingTime = 5000;
+
 enum CollisionType { FULL, TOP, BOTTOM, LEFT, RIGHT, ANY };
 
 
@@ -46,7 +48,8 @@ class Level
 
 	void addEntity(Entity* entity);
 
-	bool timeStopper() const;
+	void stopTime();
+	bool isTimeStopped() const;
 
 	private:
 
@@ -63,6 +66,8 @@ class Level
 
 	glm::ivec2 cam;
 	std::vector<glm::vec2> portals;
+
+	int stopTimer;
 
 	bool load(const std::string& path, const Program& program);
 	glm::vec2 roomRelativeToWorldCoords(glm::ivec2* roomPositions, int room, glm::ivec2 coords) const;
