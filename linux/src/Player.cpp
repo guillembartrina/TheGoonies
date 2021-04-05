@@ -336,6 +336,7 @@ void Player::updateEntityCollisions() {
 					touchingVine = true;
 					climbableVine = sensor;
 				}
+				//If portal, passar code a var 'change' i fer play del so sound_portal.
 			}
 		}
 	}
@@ -404,7 +405,9 @@ int Player::getFriendCounter() const {
 
 int Player::changeLevel()
 {
-	return change;
+	int code = change;
+	change = -1;
+	return code;
 }
 
 bool Player::isDead() const
