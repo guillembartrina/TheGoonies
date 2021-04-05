@@ -41,7 +41,7 @@ class Level
 	bool collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveUp(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
-	bool collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveDown(const glm::vec2& prevPos, const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 
 	bool getFirstOf(const glm::vec2& pos, const glm::vec2& size, int direction, glm::vec2& first) const;
 	bool getFirstOf_Tiles(const glm::ivec2& ini, int direction, CollisionType type, glm::ivec2& first) const;

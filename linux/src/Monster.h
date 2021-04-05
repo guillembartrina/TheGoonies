@@ -3,6 +3,7 @@
 
 #include "Entity.h"
 #include "Tilesheet.h"
+#include "irr/irrKlang.h"
 
 class Monster : public Entity
 {
@@ -12,6 +13,10 @@ class Monster : public Entity
 	Monster(const glm::vec2 &position, const glm::vec2 &size);
 	
 	virtual void kill() = 0;
+
+	protected:
+
+	static irrklang::ISoundSource* sound_kill;
 
 };
 

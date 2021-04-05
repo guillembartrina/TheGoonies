@@ -61,9 +61,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	sound_rescue = Game::instance().getEngine()->addSoundSourceFromFile("sounds/rescue.ogg");
 	sound_rescue->setDefaultVolume(0.3f);
 	sound_pickup = Game::instance().getEngine()->addSoundSourceFromFile("sounds/item.mp3");
-	sound_pickup->setDefaultVolume(0.3f);
-	sound_kill = Game::instance().getEngine()->addSoundSourceFromFile("sounds/kill.mp3");
-	sound_kill->setDefaultVolume(0.3f);
+	sound_pickup->setDefaultVolume(0.3f);	
 	sound_portal = Game::instance().getEngine()->addSoundSourceFromFile("sounds/portal.mp3");
 	sound_portal->setDefaultVolume(0.3f);
 }
@@ -159,7 +157,7 @@ void Player::updateMovement() {
 		else if (Game::instance().getSpecialKey(GLUT_KEY_DOWN))
 		{
 			Entity::setPosition(Entity::getPosition() + glm::vec2(0, flyVel));
-			if (level->collisionMoveDown(Entity::getPosition(), Entity::getSize(), newPos))
+			if (level->collisionMoveDown(Entity::getPosition(), Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
 			}
@@ -275,7 +273,7 @@ void Player::updateMovement() {
 			futureY = newPos.y;
 			velocity = glm::vec2(velocity.x, 0.f);
 		}
-		else if (velocity.y > 0 && level->collisionMoveDown(glm::vec2(oldPos.x, futureY), Entity::getSize(), newPos))
+		else if (velocity.y > 0 && level->collisionMoveDown(Entity::getPosition(), glm::vec2(oldPos.x, futureY), Entity::getSize(), newPos))
 		{
 			futureY = newPos.y;
 			velocity = glm::vec2(velocity.x, 0.f);

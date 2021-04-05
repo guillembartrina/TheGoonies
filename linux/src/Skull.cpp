@@ -2,6 +2,7 @@
 #include "Skull.h"
 #include "Level.h"
 #include "Utils.h"
+#include "Game.h"
 
 #include <iostream>
 
@@ -130,4 +131,6 @@ void Skull::kill()
 {
     destroying = 1000;
     sprite->setFrame(4);
+    type = EntityType::NONE;
+    Game::instance().getEngine()->play2D(sound_kill);
 }

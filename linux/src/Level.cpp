@@ -241,43 +241,47 @@ bool Level::collisionMoveUp(const glm::vec2& pos, const glm::vec2& size, glm::ve
     return false;
 }
 
-bool Level::collisionMoveDown(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
+bool Level::collisionMoveDown(const glm::vec2& prevPos, const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const
 {
     int xmin = pos.x / tileSize.x, xmax = (pos.x + size.x - 1.f) / tileSize.x;
-    int y = (pos.y + size.y - 1.f) / tileSize.y;
+    //int y = (pos.y + size.y - 1.f) / tileSize.y;
+    int ymin = prevPos.y / tileSize.y, ymax = (pos.y + size.y - 1.f) / tileSize.y;
 
-    for(int x = xmin; x <= xmax; x++)
+    for(int y = ymin; y <= ymax; y++)
     {
-        switch(collisionMap[map[y*mapSize.x+x]])
+        for(int x = xmin; x <= xmax; x++)
         {
-            case CollisionType::FULL:
-            case CollisionType::TOP:
-                shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
-                return true;
-                break;
-            case CollisionType::BOTTOM:
-                if(pos.y + size.y > y*tileSize.y + tileSize.y*0.8f)
-                {
-                    shouldbe = glm::vec2(pos.x, y*tileSize.y + tileSize.y*0.8f - size.y); //-1 pixel?
-                    return true;
-                }
-                break;
-            case CollisionType::LEFT:
-                if(pos.x < (x+0.5f)*tileSize.x)
-                {
+            switch(collisionMap[map[y*mapSize.x+x]])
+            {
+                case CollisionType::FULL:
+                case CollisionType::TOP:
                     shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
                     return true;
-                }
-                break;
-            case CollisionType::RIGHT:
-                if(pos.x + size.x > (x+0.5f)*tileSize.x)
-                {
-                    shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
-                    return true;
-                }
-                break;
-            default:
-                break;
+                    break;
+                case CollisionType::BOTTOM:
+                    if(pos.y + size.y > y*tileSize.y + tileSize.y*0.8f)
+                    {
+                        shouldbe = glm::vec2(pos.x, y*tileSize.y + tileSize.y*0.8f - size.y); //-1 pixel?
+                        return true;
+                    }
+                    break;
+                case CollisionType::LEFT:
+                    if(pos.x < (x+0.5f)*tileSize.x)
+                    {
+                        shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
+                        return true;
+                    }
+                    break;
+                case CollisionType::RIGHT:
+                    if(pos.x + size.x > (x+0.5f)*tileSize.x)
+                    {
+                        shouldbe = glm::vec2(pos.x, y*tileSize.y - size.y);
+                        return true;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
     return false;
@@ -302,7 +306,7 @@ bool Level::getFirstOf(const glm::vec2& pos, const glm::vec2& size, int directio
                 break;
             case 2:
                 if(curr.y + size.y >= mapSize.y*tileSize.y) return false;
-                if(collisionMoveDown(curr, size, first)) return true;
+                if(collisionMoveDown(curr, curr, size, first)) return true;
                 curr.y += tileSize.y*0.5f;
                 break;
             case 3:
