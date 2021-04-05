@@ -5,6 +5,7 @@
 #include "Entity.h"
 #include "Item.h"
 #include "Sensor.h"
+#include "Hitbox.h"
 #include <vector>
 #include "irr/irrKlang.h"
 
@@ -57,6 +58,7 @@ class Player : public Entity
 	bool touchingVine;
 	std::vector<int> powerups;
 	Sensor *climbableVine;
+	Hitbox *punchHitbox;
 
 	Texture* texture;
 

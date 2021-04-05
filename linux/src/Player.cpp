@@ -22,6 +22,9 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	this->hurtTimer = -1;
 	this->hasKey = false;
 	this->friendCounter = 0;
+
+	punchHitbox = new Hitbox(glm::vec2(0.0f), tileSize*glm::vec2(0.1f, 2.f));
+
 	powerups = std::vector<int>(POW_HYPERSHOES - BAG, 0);
 
 	texture = Texture::createTexture("images/player.png", PixelFormat::TEXTURE_PIXEL_FORMAT_RGBA);
@@ -74,6 +77,7 @@ void Player::spawn(Level *level)
 {
 	Entity::spawn(level);
 	active = true;
+	punchHitbox->spawn(level);
 }
 
 void Player::update(int deltaTime)
@@ -117,6 +121,7 @@ void Player::update(int deltaTime)
 	touchingVine = false;
 	updateEntityCollisions();
 	updateMovement();
+	punchHitbox->update(deltaTime);
 
 	Entity::update(deltaTime);
 }
@@ -185,12 +190,17 @@ void Player::updateMovement() {
 	State newState = state;
 
 	if (Game::instance().getKey('z')) {
-		if(state != JUMP_LEFT && state != JUMP_RIGHT) velocity = glm::vec2(0.f, velocity.y);
+		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
+			velocity = glm::vec2(0.f, velocity.y);
+			if (!punchHitbox->isActive()) punchHitbox->setActive(250.f);
+		}
 		if (state == WALK_LEFT || state == IDLE_LEFT) {
 			newState = PUNCH_LEFT;
+			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(-2.f, 0.f));
 		}
 		if (state == WALK_RIGHT || state == IDLE_RIGHT) {
 			newState = PUNCH_RIGHT;
+			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(tileSize.x*2.f + 2.f, 0.f));
 		}
 	} else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 		velocity = glm::vec2(-2.0f, velocity.y);
