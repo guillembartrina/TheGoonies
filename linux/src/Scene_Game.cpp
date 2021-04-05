@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cmath>
 #include "Scene_Menu.h"
+#include <GL/glut.h>
 
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -60,6 +61,21 @@ void Scene_Game::update(int deltaTime)
 	}
 	else
 	{
+		if(Game::instance().getKey('0'))
+		{
+			level = levels[0];
+			level->spawnPlayer(player, -1);
+		}
+		if(Game::instance().getKey('1'))
+		{
+			level = levels[1];
+			level->spawnPlayer(player, -1);
+		}
+		if(Game::instance().getKey('2'))
+		{
+			level = levels[2];
+			level->spawnPlayer(player, -1);
+		}
 
 		int nlvl;
 		if((nlvl = player->changeLevel()) >= 0)
