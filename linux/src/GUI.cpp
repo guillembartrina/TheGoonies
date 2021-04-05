@@ -35,8 +35,11 @@ GUI::GUI(const glm::mat4& projection, const glm::vec4& rect, Player *player, Pro
     background = new Quad(glm::vec2(rect.x, rect.w), glm::vec2(rect.y-rect.x, rect.z-rect.w), glm::vec4(0.f, 0.f, 0.f, 1.f), program);
 	maxVitBar = new Quad(glm::vec2(50.f, 15.f), glm::vec2(270.f, 34.f), glm::vec4(1.f, 1.f, 1.f, 1.f), program);
 	vitBar = new Quad(glm::vec2(60.f, 17.f), glm::vec2(250.f, 30.f), glm::vec4(0.f, .5f, 0.f, 1.f), program);
+	maxExpBar = new Quad(glm::vec2(50.f, 55.f), glm::vec2(270.f, 34.f), glm::vec4(1.f, 1.f, 1.f, 1.f), program);
+	expBar = new Quad(glm::vec2(60.f, 57.f), glm::vec2(10.f, 30.f), glm::vec4(0.f, .0f, 5.f, 1.f), program);
 
 	oldVit = -1;
+	oldExp = -1;
 	
 }
 
@@ -48,11 +51,18 @@ GUI::~GUI()
 void GUI::update(int deltatime)
 {
 	int newVit = player->getVit();
+	int newExp = player->getExp();
+
 	if(newVit != oldVit)
 	{
 		oldVit = newVit;
 		delete vitBar;
 		vitBar = new Quad(glm::vec2(60.f, 17.f), glm::vec2((player->getVit()/50.f)*250.f, 30.f), glm::vec4(0.f, 1.f, 0.f, 1.f), program);
+	}
+	if (newExp != oldExp) {
+		oldExp = newExp;
+		delete expBar;
+		expBar = new Quad(glm::vec2(60.f, 57.f), glm::vec2((player->getExp()/1000.f)*250.f, 30.f), glm::vec4(0.f, .0f, 5.f, 1.f), program);
 	}
 }
 
@@ -71,7 +81,10 @@ void GUI::render(Program &programTexture)
     background->render(program);
 	maxVitBar->render(program);
 	vitBar->render(program);
+	maxExpBar->render(program);
+	expBar->render(program);
     text.render("VIT", glm::vec2(10.f, 40.f), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
+	text.render("EXP", glm::vec2(10.f, 80.f), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
 	for (int i = 0; i < player->getPowerups().size()-2; ++i) {
 		if (player->getPowerups()[i] != 0) {
 			powerupFrames->setPosition(glm::vec2(450.f + i*70.f, 17.f));

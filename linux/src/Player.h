@@ -33,6 +33,8 @@ class Player : public Entity
 	int changeLevel();
 	bool isDead() const;
 	bool hasWon() const;
+
+	void gainExp(int exp);
 	
 	private:
 

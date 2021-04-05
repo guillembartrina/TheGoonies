@@ -403,10 +403,14 @@ void Player::handleEntityCollisionItem(Entity *it) {
 			hasKey = true;
 			Game::instance().getEngine()->play2D(sound_pickup);
 		}
-	} else if (item->getCode() == POTION) {
+	}
+	else if (item->getCode() == POTION) {
 		vit = (vit + 20) > 50 ? 50 : vit + 20;
 		item->setDestroy();
 		Game::instance().getEngine()->play2D(sound_pickup);
+	} else if (item->getCode() == BAG) {
+		item->setDestroy();
+		gainExp(300);
 	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
 		int powerUpCode = item->getCode() - POW_YELLOWHELMET;
 		if (item->getCode() == POW_TIMESTOPPER) {
@@ -424,6 +428,7 @@ void Player::handleEntityCollisionItem(Entity *it) {
 		Game::instance().getEngine()->play2D(sound_rescue);
 		item->setDestroy();
 		++friendCounter;
+		gainExp(300);
 	}
 }
 
@@ -483,6 +488,12 @@ bool Player::hasWon() const
 	return won;
 }
 
-
+void Player::gainExp(int exp) {
+	this->exp += exp;
+	if (this->exp >= 1000) {
+		this->exp = 0;
+		vit = 50;
+	}
+}
 
 
