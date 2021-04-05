@@ -27,21 +27,28 @@ class Player : public Entity
 	int getVit() const;
 	int getExp() const;
 	int getFriendCounter() const;
+	Level * getLevel() const;
 	std::vector<int> getPowerups() const;
 
 	int changeLevel();
 	bool isDead() const;
 	bool hasWon() const;
+
+	void gainExp(int exp);
 	
 	private:
 
 	bool active;
 	bool tped;
 	int tpedTimer;
+	int dashTimer;
+	bool touchedGroundSinceDash;
 
 	int change;
 	bool dead;
 	bool won;
+
+	float velConstant;
 
 	void updateMovement();
 	void updateEntityCollisions();

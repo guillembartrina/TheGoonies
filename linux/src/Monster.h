@@ -5,14 +5,20 @@
 #include "Tilesheet.h"
 #include "irr/irrKlang.h"
 
+enum MonsterType {MONSTERSKELETON, SKULL};
+
 class Monster : public Entity
 {
 
 	public:
 
-	Monster(const glm::vec2 &position, const glm::vec2 &size);
+	Monster(const MonsterType type, const glm::vec2 &position, const glm::vec2 &size);
 	
 	virtual void kill() = 0;
+	MonsterType getMonsterType();
+
+private:
+	MonsterType type;
 
 	protected:
 

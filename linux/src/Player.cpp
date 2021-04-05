@@ -3,6 +3,7 @@
 #include "Level.h"
 #include "Sensor.h"
 #include "Door.h"
+#include "Monster.h"
 
 #include <GL/glut.h>
 #include <iostream>
@@ -23,6 +24,9 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	this->hurtTimer = -1;
 	this->hasKey = false;
 	this->friendCounter = 0;
+	velConstant = 1.0f;
+	dashTimer = -1;
+	touchedGroundSinceDash = true;
 
 	punchHitbox = new Hitbox(glm::vec2(0.0f), tileSize*glm::vec2(0.1f, 2.f));
 
@@ -128,6 +132,9 @@ void Player::update(int deltaTime)
 		}
 		if (hurtTimer < 0) sprite->setReverseColor(false);
 	}
+	if (dashTimer >= 0) {
+		dashTimer -= deltaTime;
+	}
 	touchingVine = false;
 	updateEntityCollisions();
 	updateMovement();
@@ -212,8 +219,25 @@ void Player::updateMovement() {
 			newState = PUNCH_RIGHT;
 			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(tileSize.x*2.f + 2.f, 0.f));
 		}
-	} else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
-		velocity = glm::vec2(-2.0f, velocity.y);
+	}
+	else if ((touchedGroundSinceDash && Game::instance().getKey('c') && dashTimer < 0) || dashTimer > 500) {
+		if (state == JUMP_LEFT || state == WALK_LEFT) {
+			if (dashTimer < 0) dashTimer = 600.f;
+			if (dashTimer > 500) {
+				touchedGroundSinceDash = false;
+				velocity = glm::vec2(-10.f, 0.f);
+			}
+		}
+		else if (state == JUMP_RIGHT || state == WALK_RIGHT) {
+			if (dashTimer < 0) dashTimer = 600.f;
+			if (dashTimer > 500) {
+				touchedGroundSinceDash = false;
+				velocity = glm::vec2(10.f, 0.f);
+			}
+		}
+	}
+	else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+		velocity = glm::vec2(-2.0f*velConstant, velocity.y);
 		if (state != JUMP_LEFT && state != JUMP_RIGHT
 			&& state != CLIMB && state != WALK_LEFT) {
 			newState = WALK_LEFT;
@@ -223,7 +247,7 @@ void Player::updateMovement() {
 		}
 	}
 	else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT)) {
-		velocity = glm::vec2(2.0f, velocity.y);
+		velocity = glm::vec2(2.0f*velConstant, velocity.y);
 		if (state != JUMP_LEFT && state != CLIMB 
 			&& state != JUMP_RIGHT && state != WALK_RIGHT) {
 			newState = WALK_RIGHT;
@@ -291,6 +315,7 @@ void Player::updateMovement() {
 			velocity = glm::vec2(velocity.x, 0.f);
 			if(state == JUMP_RIGHT) newState = (velocity.x > 0.f ? WALK_RIGHT : IDLE_RIGHT);
 			if(state == JUMP_LEFT) newState = (velocity.x < 0.f ? WALK_LEFT : IDLE_LEFT);
+			touchedGroundSinceDash = true;
 		}
 	}
 
@@ -328,7 +353,17 @@ void Player::updateEntityCollisions() {
 	std::list<Entity *> entities = level->getEntities();
 	for (std::list<Entity *>::iterator it = entities.begin(); it != entities.end(); ++it) {
 		if (areColliding(this, *it)) {
-			if ((*it)->getType() == OBSTACLE) {
+			if ((*it)->getType() == OBSTACLE || (*it)->getType() == OBSTACLE_ROCK || (*it)->getType() == OBSTACLE_DROPLET) {
+				if (hurtTimer < 0 && (*it)->getType() == OBSTACLE_ROCK && powerups[0] > 0) {
+					hurtTimer = 1000;
+					--powerups[0];
+					continue;
+				}
+				if (hurtTimer < 0 && (*it)->getType() == OBSTACLE_DROPLET && powerups[1] > 0) {
+					hurtTimer = 1000;
+					--powerups[1];
+					continue;
+				}
 				getHurt(5);
 			} else if ((*it)->getType() == ITEM) {
 				handleEntityCollisionItem(*it);
@@ -339,6 +374,22 @@ void Player::updateEntityCollisions() {
 					hasKey = false;
 				}
 			} else if ((*it)->getType() == MONSTER) {
+				Monster *monster = (Monster *)*it;
+				if (monster->getMonsterType() == MonsterType::MONSTERSKELETON) {
+					if (hurtTimer < 0) {
+						if (powerups[2] > 0) {
+							monster->kill();
+							--powerups[2];
+							hurtTimer = 1000;
+							continue;
+						}
+						if (powerups[3] > 0) {
+							--powerups[3];
+							hurtTimer = 1000;
+							continue;
+						}
+					}
+				}
 				getHurt(10);
 			}
 			else if ((*it)->getType() == SENSOR)
@@ -375,21 +426,32 @@ void Player::handleEntityCollisionItem(Entity *it) {
 			hasKey = true;
 			Game::instance().getEngine()->play2D(sound_pickup);
 		}
-	} else if (item->getCode() == POTION) {
+	}
+	else if (item->getCode() == POTION) {
 		vit = (vit + 20) > 50 ? 50 : vit + 20;
 		item->setDestroy();
 		Game::instance().getEngine()->play2D(sound_pickup);
+	} else if (item->getCode() == BAG) {
+		item->setDestroy();
+		gainExp(300);
 	} else if (item->getCode() >= POW_YELLOWHELMET && item->getCode() <= POW_HYPERSHOES) {
 		int powerUpCode = item->getCode() - POW_YELLOWHELMET;
-		if (powerups[powerUpCode] == 0) {
+		if (item->getCode() == POW_TIMESTOPPER) {
+			if (!level->isTimeStopped()){
+				item->setDestroy();
+				level->stopTime();
+			}
+		} else if (powerups[powerUpCode] == 0) {
 			item->setDestroy();
 			powerups[powerUpCode] = item->getCode() == POW_HYPERSHOES ? -1 : 2;
+			if (item->getCode() == POW_HYPERSHOES) velConstant = 2.0f;
 			Game::instance().getEngine()->play2D(sound_pickup);
 		}
 	} else if (item->getCode() == FRIEND) {
 		Game::instance().getEngine()->play2D(sound_rescue);
 		item->setDestroy();
 		++friendCounter;
+		gainExp(300);
 	}
 }
 
@@ -428,6 +490,10 @@ int Player::getFriendCounter() const {
 	return friendCounter;
 }
 
+Level * Player::getLevel() const {
+	return level;
+}
+
 int Player::changeLevel()
 {
 	int code = change;
@@ -445,6 +511,12 @@ bool Player::hasWon() const
 	return won;
 }
 
-
+void Player::gainExp(int exp) {
+	this->exp += exp;
+	if (this->exp >= 1000) {
+		this->exp = 0;
+		vit = 50;
+	}
+}
 
 
