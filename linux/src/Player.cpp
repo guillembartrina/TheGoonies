@@ -25,6 +25,8 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	this->hasKey = false;
 	this->friendCounter = 0;
 	velConstant = 1.0f;
+	dashTimer = -1;
+	touchedGroundSinceDash = true;
 
 	punchHitbox = new Hitbox(glm::vec2(0.0f), tileSize*glm::vec2(0.1f, 2.f));
 
@@ -130,6 +132,9 @@ void Player::update(int deltaTime)
 		}
 		if (hurtTimer < 0) sprite->setReverseColor(false);
 	}
+	if (dashTimer >= 0) {
+		dashTimer -= deltaTime;
+	}
 	touchingVine = false;
 	updateEntityCollisions();
 	updateMovement();
@@ -214,7 +219,24 @@ void Player::updateMovement() {
 			newState = PUNCH_RIGHT;
 			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(tileSize.x*2.f + 2.f, 0.f));
 		}
-	} else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
+	}
+	else if ((touchedGroundSinceDash && Game::instance().getKey('c') && dashTimer < 0) || dashTimer > 500) {
+		if (state == JUMP_LEFT || state == WALK_LEFT) {
+			if (dashTimer < 0) dashTimer = 600.f;
+			if (dashTimer > 500) {
+				touchedGroundSinceDash = false;
+				velocity = glm::vec2(-10.f, 0.f);
+			}
+		}
+		else if (state == JUMP_RIGHT || state == WALK_RIGHT) {
+			if (dashTimer < 0) dashTimer = 600.f;
+			if (dashTimer > 500) {
+				touchedGroundSinceDash = false;
+				velocity = glm::vec2(10.f, 0.f);
+			}
+		}
+	}
+	else if (Game::instance().getSpecialKey(GLUT_KEY_LEFT)) {
 		velocity = glm::vec2(-2.0f*velConstant, velocity.y);
 		if (state != JUMP_LEFT && state != JUMP_RIGHT
 			&& state != CLIMB && state != WALK_LEFT) {
@@ -293,6 +315,7 @@ void Player::updateMovement() {
 			velocity = glm::vec2(velocity.x, 0.f);
 			if(state == JUMP_RIGHT) newState = (velocity.x > 0.f ? WALK_RIGHT : IDLE_RIGHT);
 			if(state == JUMP_LEFT) newState = (velocity.x < 0.f ? WALK_LEFT : IDLE_LEFT);
+			touchedGroundSinceDash = true;
 		}
 	}
 

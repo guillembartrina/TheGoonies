@@ -41,6 +41,8 @@ class Player : public Entity
 	bool active;
 	bool tped;
 	int tpedTimer;
+	int dashTimer;
+	bool touchedGroundSinceDash;
 
 	int change;
 	bool dead;
