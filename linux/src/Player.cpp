@@ -14,6 +14,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	change = -1;
 	dead = false;
 	won = false;
+	tped = false;
 
 	this->velocity = glm::vec2(0.f, 0.f);
 	this->acceleration = glm::vec2(0.f, 0.2f);
@@ -81,6 +82,17 @@ void Player::spawn(Level *level)
 void Player::update(int deltaTime)
 {
 	if(!active) return;
+
+	if(tped)
+	{
+		tpedTimer -= deltaTime;
+		if(tpedTimer < 0 && !Game::instance().getKey('x'))
+		{
+			tped = false;
+			sprite->setColor(glm::vec4(1.f, 1.f, 1.f, 1.f));
+		}
+		return;
+	}
 	
 	// Special modes
 	if (!fly && Game::instance().getSpecialKey(GLUT_KEY_F1)) {
@@ -187,7 +199,7 @@ void Player::updateMovement() {
 
 	State newState = state;
 
-	if (Game::instance().getKey('z')) {
+	if (!tped && Game::instance().getKey('z')) {
 		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
 			velocity = glm::vec2(0.f, velocity.y);
 			if (!punchHitbox->isActive()) punchHitbox->setActive(250.f);
@@ -336,7 +348,20 @@ void Player::updateEntityCollisions() {
 					touchingVine = true;
 					climbableVine = sensor;
 				}
-				//If portal, passar code a var 'change' i fer play del so sound_portal.
+				else if(!tped && sensor->getType() == PORTAL && Game::instance().getKey('x'))
+				{
+					change = sensor->getCode();
+					Game::instance().getEngine()->play2D(sound_portal);
+					active = false;
+					tped = true;
+					tpedTimer = 800;
+					sprite->setAnimation(-1);
+					sprite->setFrame(0);
+				}
+				else if(sensor->getType() == END && Game::instance().getKey('z') && friendCounter == 6)
+				{
+					won = true;
+				}
 			}
 		}
 	}

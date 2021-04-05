@@ -72,6 +72,7 @@ void Droplet::update(int deltaTime)
                 sprite->setFrame(3);
                 state = DROPLET_CRASHING;
                 timer = dropletCrashing;
+                type = EntityType::NONE;
             }
             else
             {
@@ -84,7 +85,6 @@ void Droplet::update(int deltaTime)
             if(timer < 0)
             {
                 state = DROPLET_WAITING;
-                type = EntityType::NONE;
                 timer = dropletWaiting;
                 setPosition(ini);
             }

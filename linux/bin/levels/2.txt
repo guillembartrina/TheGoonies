@@ -1,5 +1,5 @@
-Name1
-images/tilesetGreen.png
+Name2
+images/tilesetFuchsia.png
 16 6
 1
 1 1
@@ -17,7 +17,7 @@ images/tilesetGreen.png
              UVW               ,
 !!!!!!!#     XYZ               +
 47%34763     [ \               +
-  &        "!]!^!!!!!!!!!!!#  ,
+  &        "!]!^!!!!!!!!!!!#!!!,
   &        6567346%3467347656  -
   &               &            +  
   &               &         GHI+
@@ -35,4 +35,4 @@ images/tilesetGreen.png
 images/moving.png
 16 6
 1
-8 0 0 14 4
+8 1 0 14 4

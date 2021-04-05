@@ -54,6 +54,7 @@ void Rock::update(int deltaTime)
                 sprite->setFrame(1);
                 state = ROCK_CRASHING;
                 timer = rockCrashing;
+                type = EntityType::NONE;
             }
             else
             {

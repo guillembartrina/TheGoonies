@@ -36,7 +36,7 @@ void Scene_Game::init()
 	player = new Player(program);
 	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player, program);
 
-	for(int i = 1; i <= 1; i++)
+	for(int i = 0; i <= 2; i++)
 	{
 		levels.push_back(new Level("levels/" + std::to_string(i) + ".txt", program));
 	}
@@ -64,8 +64,8 @@ void Scene_Game::update(int deltaTime)
 		int nlvl;
 		if((nlvl = player->changeLevel()) >= 0)
 		{
-			int lvlId = nlvl >> 32;
-			int portalId = nlvl & 0x00FF;
+			int lvlId = nlvl >> 16;
+			int portalId = nlvl & 0xFFFF;
 			level = levels[lvlId];
 			level->spawnPlayer(player, portalId);
 		}

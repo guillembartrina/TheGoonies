@@ -36,6 +36,8 @@ class Player : public Entity
 	private:
 
 	bool active;
+	bool tped;
+	int tpedTimer;
 
 	int change;
 	bool dead;
