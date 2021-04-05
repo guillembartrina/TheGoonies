@@ -7,7 +7,7 @@
 #include <iostream>
 
 Skull::Skull(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
-    : Monster(position, tileSize)
+    : Monster(MonsterType::SKULL, position, tileSize)
 {
     active = false;
     jump = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
@@ -131,6 +131,6 @@ void Skull::kill()
 {
     destroying = 1000;
     sprite->setFrame(4);
-    type = EntityType::NONE;
+    Entity::type = EntityType::NONE;
     Game::instance().getEngine()->play2D(sound_kill);
 }

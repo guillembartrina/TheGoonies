@@ -8,8 +8,13 @@
 
 irrklang::ISoundSource* Monster::sound_kill = Game::instance().getEngine()->addSoundSourceFromFile("sounds/kill.mp3");
 
-Monster::Monster(const glm::vec2 &position, const glm::vec2 &size)
+Monster::Monster(const MonsterType type, const glm::vec2 &position, const glm::vec2 &size)
     : Entity(EntityType::MONSTER, position, size)
 {
     sound_kill->setDefaultVolume(0.3f);
+	this->type = type;
+}
+
+MonsterType Monster::getMonsterType() {
+	return type;
 }

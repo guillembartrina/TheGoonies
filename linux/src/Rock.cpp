@@ -8,7 +8,7 @@
 #include <algorithm>
 
 Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
-    : Entity(EntityType::OBSTACLE, position, glm::vec2(tileSize.x*2.f, tileSize.y))
+    : Entity(EntityType::OBSTACLE_ROCK, position, glm::vec2(tileSize.x*2.f, tileSize.y))
 {
     state = ROCK_READY;
 

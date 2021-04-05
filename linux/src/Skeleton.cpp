@@ -8,7 +8,7 @@
 #include <iostream>
 
 Skeleton::Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
-    : Monster(position, glm::vec2(tileSize.x, tileSize.y*2.f)), program(program)
+    : Monster(MonsterType::MONSTERSKELETON, position, glm::vec2(tileSize.x, tileSize.y*2.f)), program(program)
 {
     active = false;
     direction = (RandGen::instance().randomInt() % 2 == 0 ? false : true);
@@ -147,6 +147,6 @@ void Skeleton::kill()
 {
     destroying = 1000;
     sprite->setFrame(4);
-    type = EntityType::NONE;
+    Entity::type = EntityType::NONE;
     Game::instance().getEngine()->play2D(sound_kill);
 }

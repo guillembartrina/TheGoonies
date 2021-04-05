@@ -27,6 +27,7 @@ class Player : public Entity
 	int getVit() const;
 	int getExp() const;
 	int getFriendCounter() const;
+	Level * getLevel() const;
 	std::vector<int> getPowerups() const;
 
 	int changeLevel();
@@ -42,6 +43,8 @@ class Player : public Entity
 	int change;
 	bool dead;
 	bool won;
+
+	float velConstant;
 
 	void updateMovement();
 	void updateEntityCollisions();

@@ -1,5 +1,6 @@
 
 #include "GUI.h"
+#include "Level.h"
 
 #include <iostream>
 
@@ -71,13 +72,24 @@ void GUI::render(Program &programTexture)
 	maxVitBar->render(program);
 	vitBar->render(program);
     text.render("VIT", glm::vec2(10.f, 40.f), 24, glm::vec4(1.0, 1.0, 1.0, 1.0));
-	for (int i = 0; i < player->getPowerups().size(); ++i) {
+	for (int i = 0; i < player->getPowerups().size()-2; ++i) {
 		if (player->getPowerups()[i] != 0) {
 			powerupFrames->setPosition(glm::vec2(450.f + i*70.f, 17.f));
 			powerupFrames->setFrame(i);
 			powerupFrames->render(programTexture);
 		}
 	}
+	if ((player->getLevel())->isTimeStopped()) {
+		powerupFrames->setPosition(glm::vec2(450.f + 4 * 70.f, 17.f));
+		powerupFrames->setFrame(4);
+		powerupFrames->render(programTexture);
+	}
+	if (player->getPowerups()[5] != 0) {
+		powerupFrames->setPosition(glm::vec2(450.f + 5 * 70.f, 17.f));
+		powerupFrames->setFrame(5);
+		powerupFrames->render(programTexture);
+	}
+
 	friendSprite->render(programTexture);
 	text.render(std::to_string(player->getFriendCounter()) + "/6", glm::vec2(970.f ,68.f), 48, glm::vec4(1.0f, 1.0f, 1.0f, 1.0f));
 	
