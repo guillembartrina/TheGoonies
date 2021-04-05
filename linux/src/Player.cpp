@@ -59,6 +59,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	
 	state = IDLE_RIGHT;
 	fly = false;
+	godmode = false;
 
 	sound_jump = Game::instance().getEngine()->addSoundSourceFromFile("sounds/jump.wav");
 	sound_jump->setDefaultVolume(0.3f);
@@ -161,7 +162,7 @@ void Player::updateMovement() {
 		if (Game::instance().getSpecialKey(GLUT_KEY_LEFT))
 		{
 			Entity::setPosition(Entity::getPosition() + glm::vec2(-flyVel, 0));
-			if (level->collisionMoveLeft(Entity::getPosition(), Entity::getSize(), newPos))
+			if (level->collisionMoveLeft(Entity::getPosition(), Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
 			}
@@ -170,7 +171,7 @@ void Player::updateMovement() {
 		else if (Game::instance().getSpecialKey(GLUT_KEY_RIGHT))
 		{
 			Entity::setPosition(Entity::getPosition() + glm::vec2(flyVel, 0));
-			if (level->collisionMoveRight(Entity::getPosition(), Entity::getSize(), newPos))
+			if (level->collisionMoveRight(Entity::getPosition(), Entity::getPosition(), Entity::getSize(), newPos))
 			{
 				Entity::setPosition(newPos);
 			}
@@ -312,6 +313,22 @@ void Player::updateMovement() {
 	velocity = velocity + acceleration;
 	//if (velocity.y >= 4.f) velocity = glm::vec2(velocity.x, 3.9f);
 
+	float futureX = oldPos.x + velocity.x;
+
+	if(velocity.x != 0.f)
+	{
+		if (velocity.x < 0.f && level->collisionMoveLeft(Entity::getPosition(), glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
+			futureX = newPos.x;
+			velocity = glm::vec2(0.f, velocity.y);
+			if (newState == WALK_LEFT) newState = IDLE_LEFT;
+		}
+		else if (velocity.x > 0.f && level->collisionMoveRight(Entity::getPosition(), glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
+			futureX = newPos.x;
+			velocity = glm::vec2(0.f, velocity.y);
+			if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
+		}
+	}
+
 	float futureY = oldPos.y + velocity.y;
 
 	if(velocity.y != 0.f)
@@ -335,22 +352,6 @@ void Player::updateMovement() {
 	{
 		if (state == IDLE_RIGHT || state == WALK_RIGHT || state == PUNCH_RIGHT) newState = JUMP_RIGHT;
 		if (state == IDLE_LEFT || state == WALK_LEFT || state == PUNCH_LEFT) newState = JUMP_LEFT;
-	} 
-
-	float futureX = oldPos.x + velocity.x;
-
-	if(velocity.x != 0.f)
-	{
-		if (velocity.x < 0.f && level->collisionMoveLeft(glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
-			futureX = newPos.x;
-			velocity = glm::vec2(0.f, velocity.y);
-			if (newState == WALK_LEFT) newState = IDLE_LEFT;
-		}
-		else if (velocity.x > 0.f && level->collisionMoveRight(glm::vec2(futureX, oldPos.y), Entity::getSize(), newPos)) {
-			futureX = newPos.x;
-			velocity = glm::vec2(0.f, velocity.y);
-			if (newState == WALK_RIGHT) newState = IDLE_RIGHT;
-		}
 	}
 
 	Entity::setPosition(glm::vec2(futureX, futureY));	

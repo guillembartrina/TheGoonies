@@ -44,9 +44,9 @@ void Projectile::update(int deltaTime)
         glm::vec2 futurePos = getPosition() + direction * projectileVel;
 
         glm::vec2 junk;
-        if(direction.x > 0 && level->collisionMoveRight(futurePos, getSize(), junk)) destroying = true;
+        if(direction.x > 0 && level->collisionMoveRight(getPosition(), futurePos, getSize(), junk)) destroying = true;
         else if (direction.y > 0 && level->collisionMoveDown(getPosition(), futurePos, getSize(), junk)) destroying = true;
-        else if (direction.x < 0 && level->collisionMoveLeft(futurePos, getSize(), junk)) destroying = true;
+        else if (direction.x < 0 && level->collisionMoveLeft(getPosition(), futurePos, getSize(), junk)) destroying = true;
         else if (direction.y < 0 && level->collisionMoveUp(futurePos, getSize(), junk)) destroying = true;
         else
         {

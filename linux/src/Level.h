@@ -38,8 +38,8 @@ class Level
 	std::list<Entity *>& getEntities();
 	bool inScreen(const glm::vec2& pos) const;
 
-	bool collisionMoveLeft(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
-	bool collisionMoveRight(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveLeft(const glm::vec2& prevPos, const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
+	bool collisionMoveRight(const glm::vec2& prevPos, const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveUp(const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 	bool collisionMoveDown(const glm::vec2& prevPos, const glm::vec2& pos, const glm::vec2& size, glm::vec2& shouldbe) const;
 

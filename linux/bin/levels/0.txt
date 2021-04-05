@@ -6,9 +6,9 @@ images/tileset.png
 0123
 0 13 8
  &BCDEFGHIQRSTUVWXYZ[\`abcdghijklmnpqrstv
-'()3467<=>?JKLMNOwxyz{|}~
+'()34567<=>?JKLMNOwxyz{|}~
 !"*#$%89@AP^_efno]^
-5:;
+:;
 .+,-
 2/01
 0
