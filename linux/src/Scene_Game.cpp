@@ -37,7 +37,7 @@ void Scene_Game::init()
 	player = new Player(program);
 	gui = new GUI(projection, glm::vec4(0.f, windowX, 99.f, 0.f), player, program);
 
-	for(int i = 0; i <= 2; i++)
+	for(int i = 0; i <= 3; i++)
 	{
 		levels.push_back(new Level("levels/" + std::to_string(i) + ".txt", program));
 	}
@@ -74,6 +74,11 @@ void Scene_Game::update(int deltaTime)
 		if(Game::instance().getKey('2'))
 		{
 			level = levels[2];
+			level->spawnPlayer(player, -1);
+		}
+		if(Game::instance().getKey('3'))
+		{
+			level = levels[3];
 			level->spawnPlayer(player, -1);
 		}
 

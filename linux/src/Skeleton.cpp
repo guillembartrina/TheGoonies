@@ -36,7 +36,7 @@ Skeleton::Skeleton(const glm::vec2 &position, Tilesheet* spritesheet, const Prog
     vel = 0;
     ts = spritesheet;
 
-    sensor = new Sensor(SensorType::SKELETON, glm::vec2(0.f), glm::vec2(10.f*tileSize.x, 2.f*tileSize.y));
+    sensor = new Sensor(SensorType::SKELETON, glm::vec2(0.f), glm::vec2(8.f*tileSize.x, 2.f*tileSize.y));
     timer = 3000;
 
     destroying = -1;
@@ -123,7 +123,7 @@ void Skeleton::update(int deltaTime)
     }
     else
     {
-        sensor->setPosition(getPosition() + glm::vec2(-10.f*tileSize.x, 0.f));
+        sensor->setPosition(getPosition() + glm::vec2(-8.f*tileSize.x, 0.f));
     }
 
     if(timer > 0) timer -= deltaTime;

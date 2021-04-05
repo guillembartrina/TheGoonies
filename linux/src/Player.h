@@ -72,6 +72,7 @@ class Player : public Entity
 	Texture* texture;
 
 	bool fly;
+	bool godmode;
 
 	irrklang::ISoundSource* sound_jump, *sound_damage, *sound_rescue, *sound_pickup, *sound_portal;
 

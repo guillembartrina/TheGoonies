@@ -3,6 +3,7 @@
 #include "Level.h"
 #include "Player.h"
 #include "Game.h"
+#include "Utils.h"
 
 #include <iostream>
 
@@ -10,7 +11,7 @@ Droplet::Droplet(const glm::vec2 &position, Tilesheet* spritesheet, const Progra
     : Entity(EntityType::OBSTACLE_DROPLET, position, tileSize)
 {
     ini = position;
-    timer = dropletWaiting;
+    timer = 500 + (RandGen::instance().randomInt() % 10) * 100;
     state = DROPLET_WAITING;
     type = EntityType::NONE;
 
@@ -85,7 +86,7 @@ void Droplet::update(int deltaTime)
             if(timer < 0)
             {
                 state = DROPLET_WAITING;
-                timer = dropletWaiting;
+                timer = 500 + (RandGen::instance().randomInt() % 10) * 50;
                 setPosition(ini);
             }
         }

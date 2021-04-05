@@ -4,6 +4,7 @@
 #include "Sensor.h"
 #include "Door.h"
 #include "Monster.h"
+#include "Projectile.h"
 
 #include <GL/glut.h>
 #include <iostream>
@@ -73,6 +74,11 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 
 Player::~Player()
 {
+	Game::instance().getEngine()->removeSoundSource(sound_jump);
+	Game::instance().getEngine()->removeSoundSource(sound_damage);
+	Game::instance().getEngine()->removeSoundSource(sound_rescue);
+	Game::instance().getEngine()->removeSoundSource(sound_pickup);
+	Game::instance().getEngine()->removeSoundSource(sound_portal);
 	delete texture;
 }
 
@@ -104,6 +110,12 @@ void Player::update(int deltaTime)
 	}
 	if (fly && Game::instance().getSpecialKey(GLUT_KEY_F2)) {
 		fly = false;
+	}
+	if (!godmode && Game::instance().getSpecialKey(GLUT_KEY_F3)) {
+		godmode = true;
+	}
+	if (godmode && Game::instance().getSpecialKey(GLUT_KEY_F4)) {
+		godmode = false;
 	}
 
 	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
@@ -213,11 +225,11 @@ void Player::updateMovement() {
 		}
 		if (state == WALK_LEFT || state == IDLE_LEFT) {
 			newState = PUNCH_LEFT;
-			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(-2.f, 0.f));
+			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(-tileSize.x, 0.f));
 		}
 		if (state == WALK_RIGHT || state == IDLE_RIGHT) {
 			newState = PUNCH_RIGHT;
-			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(tileSize.x*2.f + 2.f, 0.f));
+			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(getSize().x + tileSize.x, 0.f));
 		}
 	}
 	else if ((touchedGroundSinceDash && Game::instance().getKey('c') && dashTimer < 0) || dashTimer > 500) {
@@ -391,6 +403,22 @@ void Player::updateEntityCollisions() {
 					}
 				}
 				getHurt(10);
+			} else if ((*it)->getType() == PROJECTILE) {
+				Projectile *projectile = (Projectile *)*it;
+				if (hurtTimer < 0) {
+					if (powerups[2] > 0) {
+						projectile->destroying = true;
+						--powerups[2];
+						hurtTimer = 1000;
+						continue;
+					}
+					if (powerups[3] > 0) {
+						--powerups[3];
+						hurtTimer = 1000;
+						continue;
+					}
+				}
+				getHurt(10);
 			}
 			else if ((*it)->getType() == SENSOR)
 			{
@@ -456,7 +484,7 @@ void Player::handleEntityCollisionItem(Entity *it) {
 }
 
 void Player::getHurt(int damage) {
-	if (hurtTimer < 0) {
+	if (!godmode && hurtTimer < 0) {
 		Game::instance().getEngine()->play2D(sound_damage);
 		vit -= damage;
 		hurtTimer = 1000;

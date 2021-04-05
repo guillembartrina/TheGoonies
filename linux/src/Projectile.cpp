@@ -8,7 +8,7 @@
 #include <algorithm>
 
 Projectile::Projectile(const glm::vec2 &position, const glm::vec2& direction, Tilesheet* spritesheet, const Program& program)
-    : Entity(EntityType::OBSTACLE, position, tileSize*0.8f)
+    : Entity(EntityType::PROJECTILE, position, tileSize*0.8f)
 {
     Sprite* sprite = new Sprite(position, tileSize, spritesheet->getTexture(), program);
 

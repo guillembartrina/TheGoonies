@@ -19,10 +19,11 @@ class Projectile : public Entity
 
 	void destroy();
 
+	bool destroying;
+
 	private:
 
 	glm::vec2 direction;
-	bool destroying;
 	int timer;
 };
 
