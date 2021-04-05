@@ -202,7 +202,7 @@ void Player::updateMovement() {
 	if (!tped && Game::instance().getKey('z')) {
 		if (state != JUMP_LEFT && state != JUMP_RIGHT && state != CLIMB) {
 			velocity = glm::vec2(0.f, velocity.y);
-			if (!punchHitbox->isActive()) punchHitbox->setActive(250.f);
+			if (!punchHitbox->isActive()) punchHitbox->setActive(180.f);
 		}
 		if (state == WALK_LEFT || state == IDLE_LEFT) {
 			newState = PUNCH_LEFT;
@@ -358,7 +358,7 @@ void Player::updateEntityCollisions() {
 					sprite->setAnimation(-1);
 					sprite->setFrame(0);
 				}
-				else if(sensor->getType() == END && Game::instance().getKey('z') && friendCounter == 6)
+				else if(sensor->getType() == END && Game::instance().getKey('x') && friendCounter == 6)
 				{
 					won = true;
 				}
