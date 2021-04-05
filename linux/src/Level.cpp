@@ -3,10 +3,12 @@
 #include "Game.h"
 #include "Rock.h"
 #include "Droplet.h"
+#include "Leakage.h"
 #include "Item.h"
 #include "Door.h"
 #include "Skull.h"
 #include "Skeleton.h"
+#include "Sensor.h"
 
 #include <iostream>
 #include <fstream>
@@ -462,28 +464,42 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 addEntity(new Droplet(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 3: //Item
+            case 3: //Leakage (no)
+            {
+                int direction, elementRoom, elementX, elementY;
+                file >> direction >> elementRoom >> elementX >> elementY;
+                addEntity(new Leakage((direction == 0 ? true : false), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            }
+                break;
+            case 4: //Item (3)
             {
                 int elementId, elementRoom, elementX, elementY;
                 file >> elementId >> elementRoom >> elementX >> elementY;
                 addEntity(new Item(ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 4: //Door
+            case 5: //Door (4)
             {
                 int elementId, elementConfig, elementRoom, elementX, elementY;
                 file >> elementId >> elementConfig >> elementRoom >> elementX >> elementY;
                 addEntity(new Door(elementConfig, ItemCode(elementId), roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 5: //Skull
+            case 6: //Skull (5)
             {
                 int elementRoom, elementX, elementY;
                 file >> elementRoom >> elementX >> elementY;
                 addEntity(new Skull(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
             }
                 break;
-            case 6: //Portal
+            case 7: //Skeleton
+            {
+                int elementRoom, elementX, elementY;
+                file >> elementRoom >> elementX >> elementY;
+                addEntity(new Skeleton(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), movingsheet, program));
+            }
+                break;
+            case 8: //Portal (6)
             {
                 int elementConfig, elementRoom, elementX, elementY;
                 file >> elementConfig >> elementRoom >> elementX >> elementY;
@@ -491,9 +507,13 @@ bool Level::load(const std::string& path, const Program& program) //Add loading 
                 portals.push_back(roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)));
             }
                 break;
-            //Skeleton
-            //Leakage
-            //??
+            case 9: //End (no)
+            {
+                int elementRoom, elementX, elementY;
+                file >> elementRoom >> elementX >> elementY;
+                addEntity(new Sensor(SensorType::END, roomRelativeToWorldCoords(roomPositions, elementRoom, glm::ivec2(elementX, elementY)), tileSize));
+            }
+                break;
             default:
                 break;
         }
