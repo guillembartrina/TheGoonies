@@ -5,7 +5,7 @@ images/tilesetBlue.png
 2 2
 01
  2
-1 18 4
+0 4 15
  &BCDEFGHIQRSTUVWXYZ[\`abcdghijklmnpqrstv
 '()34567<=>?JKLMNOwxyz{|}~
 !"*#$%89@AP^_efno]^

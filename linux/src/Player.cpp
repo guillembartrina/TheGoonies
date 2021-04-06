@@ -450,7 +450,7 @@ void Player::updateEntityCollisions() {
 					sprite->setAnimation(-1);
 					sprite->setFrame(0);
 				}
-				else if(sensor->getType() == END && Game::instance().getKey('x') && friendCounter == 6)
+				else if(sensor->getType() == END && Game::instance().getKey('x') && friendCounter >= 6)
 				{
 					won = true;
 				}
