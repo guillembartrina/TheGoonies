@@ -35,7 +35,9 @@ void Scene_Credits::update(int deltaTime)
 void Scene_Credits::render()
 {
 	textBold.render("CREDITS", glm::vec2(60, 100), 80, glm::vec4(1, 1, 1, 1));
-	text.render("<Credits>", glm::vec2(60, 200), 30, glm::vec4(1, 1, 1, 1));
+	text.render("A game by:", glm::vec2(60, 200), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Guillem Bartrina Moreno", glm::vec2(60, 235), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Pau Celma Casals", glm::vec2(60, 270), 30, glm::vec4(1, 1, 1, 1));
 	text.render("Press M to menu", glm::vec2(1300, 100), 30, glm::vec4(1, 1, 1, 1));
 }
 
