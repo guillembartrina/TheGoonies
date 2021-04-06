@@ -34,8 +34,11 @@ void Scene_Options::update(int deltaTime)
 
 void Scene_Options::render()
 {
-	textBold.render("OPTIONS", glm::vec2(60, 100), 80, glm::vec4(1, 1, 1, 1));
-	text.render("<Options>", glm::vec2(60, 200), 30, glm::vec4(1, 1, 1, 1));
+	textBold.render("Instructions", glm::vec2(60, 100), 80, glm::vec4(1, 1, 1, 1));
+	text.render("Character movement: Arrow keys", glm::vec2(60, 200), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Punch: Z", glm::vec2(60, 235), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Dash: C while moving ", glm::vec2(60, 270), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Use portal: X", glm::vec2(60, 305), 30, glm::vec4(1, 1, 1, 1));
 	text.render("Press M to menu", glm::vec2(1300, 100), 30, glm::vec4(1, 1, 1, 1));
 }
 
