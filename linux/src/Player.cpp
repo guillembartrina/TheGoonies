@@ -233,19 +233,19 @@ void Player::updateMovement() {
 			punchHitbox->setPosition(Entity::getPosition() + glm::vec2(getSize().x + tileSize.x, 0.f));
 		}
 	}
-	else if ((touchedGroundSinceDash && Game::instance().getKey('c') && dashTimer < 0) || dashTimer > 500) {
+	else if ((touchedGroundSinceDash && Game::instance().getKey('c') && dashTimer < 0) || dashTimer > 450) {
 		if (state == JUMP_LEFT || state == WALK_LEFT) {
 			if (dashTimer < 0) dashTimer = 600.f;
-			if (dashTimer > 500) {
+			if (dashTimer > 450) {
 				touchedGroundSinceDash = false;
-				velocity = glm::vec2(-10.f, 0.f);
+				velocity = glm::vec2(-7.f, 0.f);
 			}
 		}
 		else if (state == JUMP_RIGHT || state == WALK_RIGHT) {
 			if (dashTimer < 0) dashTimer = 600.f;
-			if (dashTimer > 500) {
+			if (dashTimer > 450) {
 				touchedGroundSinceDash = false;
-				velocity = glm::vec2(10.f, 0.f);
+				velocity = glm::vec2(7.f, 0.f);
 			}
 		}
 	}

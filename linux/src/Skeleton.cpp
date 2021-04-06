@@ -147,6 +147,7 @@ void Skeleton::kill()
 {
     destroying = 1000;
     sprite->setFrame(4);
+	level->getPlayer()->gainExp(200);
     Entity::type = EntityType::NONE;
     Game::instance().getEngine()->play2D(sound_kill);
 }
