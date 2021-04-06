@@ -8,7 +8,7 @@
 #include <algorithm>
 
 Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& program)
-    : Entity(EntityType::OBSTACLE_ROCK, position, glm::vec2(tileSize.x*2.f, tileSize.y))
+    : Entity(EntityType::OBSTACLE_ROCK, glm::vec2(position.x + tileSize.x*0.5f, position.y), tileSize)
 {
     state = ROCK_READY;
 
@@ -20,7 +20,7 @@ Rock::Rock(const glm::vec2 &position, Tilesheet* spritesheet, const Program& pro
     sprite->addFrame(new Frame(texCoords.x, texCoords.y, texCoords.z-texCoords.x, texCoords.w-texCoords.y));
     sprite->setFrame(0);
 
-    Entity::setSprite(sprite);
+    Entity::setSprite(sprite, glm::vec2(-tileSize.x*0.5f, 0.f));
 }
 
 void Rock::spawn(Level* level)

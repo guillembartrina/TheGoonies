@@ -50,7 +50,7 @@ void Scene_Menu::update(int deltaTime)
 	{
 		Game::instance().changeScene(new Scene_Game());
 	}
-	if(Game::instance().getKey('o'))
+	if(Game::instance().getKey('i'))
 	{
 		Game::instance().changeScene(new Scene_Options());
 	}
@@ -68,7 +68,7 @@ void Scene_Menu::render()
 	program.setUniformValue(program.getUniformLocation("color"), glm::vec4(1.f));
 	background->render(program);
 	text.render("Press P to play", glm::vec2(710, 600), 30, glm::vec4(1, 1, 1, 1));
-	text.render("Press O to options", glm::vec2(685, 700), 30, glm::vec4(1, 1, 1, 1));
+	text.render("Press I to instructions", glm::vec2(675, 700), 30, glm::vec4(1, 1, 1, 1));
 	text.render("Press C to credits", glm::vec2(695, 800), 30, glm::vec4(1, 1, 1, 1));
 }
 
