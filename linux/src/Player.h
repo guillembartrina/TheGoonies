@@ -73,6 +73,7 @@ class Player : public Entity
 
 	bool fly;
 	bool godmode;
+	bool pressed;
 
 	irrklang::ISoundSource* sound_jump, *sound_damage, *sound_rescue, *sound_pickup, *sound_portal;
 

@@ -17,6 +17,7 @@ Player::Player(const Program& program) : Entity(EntityType::PLAYER, glm::vec2(0.
 	dead = false;
 	won = false;
 	tped = false;
+	pressed = false;
 
 	this->velocity = glm::vec2(0.f, 0.f);
 	this->acceleration = glm::vec2(0.f, 0.2f);
@@ -118,6 +119,15 @@ void Player::update(int deltaTime)
 	if (godmode && Game::instance().getSpecialKey(GLUT_KEY_F4)) {
 		godmode = false;
 	}
+	if (!pressed && Game::instance().getSpecialKey(GLUT_KEY_F5)) {
+		friendCounter++;
+		pressed = true;
+	}
+	if (pressed && !Game::instance().getSpecialKey(GLUT_KEY_F5)) {
+		pressed = false;
+	}
+
+
 
 	if (Game::instance().getSpecialKey(GLUT_KEY_HOME)) {
 		level->spawnPlayer(this, -1);
@@ -435,6 +445,8 @@ void Player::updateEntityCollisions() {
 					active = false;
 					tped = true;
 					tpedTimer = 800;
+					velConstant = 1.f;
+					powerups[5] = 0;
 					sprite->setAnimation(-1);
 					sprite->setFrame(0);
 				}
