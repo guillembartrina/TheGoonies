@@ -3,6 +3,7 @@
 #include "Level.h"
 #include "Player.h"
 #include "Game.h"
+#include "Utils.h"
 
 #include <iostream>
 #include <algorithm>
@@ -44,7 +45,7 @@ Leakage::Leakage(bool left, const glm::vec2 &position, Tilesheet* spritesheet, c
     ini->addAnimation(new Animation({0, 1}, {100, 100}));
     full->addAnimation(new Animation({0, 1}, {100, 100}));
 
-    timer = leakageWaiting;
+    timer = timer = 1200 + (RandGen::instance().randomInt() % 10) * 100;
     type = NONE;
 
     this->left = left;
@@ -105,7 +106,7 @@ void Leakage::update(int deltaTime)
             if(timer < 0)
             {
                 type = NONE;
-                timer = leakageWaiting;
+                timer = 2000 + (RandGen::instance().randomInt() % 10) * 100;
                 state = LEAKAGE_WAITING;
             }
         }
